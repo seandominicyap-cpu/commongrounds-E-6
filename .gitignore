@@ -1,0 +1,19 @@
+# Windows system files
+Thumbs.db
+desktop.ini
+
+# Python environment and cache
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+
+# Django data
+db.sqlite3
+media/
+staticfiles/
+
+# env and log
+.env
+*.log
