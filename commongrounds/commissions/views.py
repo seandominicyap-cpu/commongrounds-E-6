@@ -6,9 +6,9 @@ from django.views.generic import TemplateView
 
 class CommissionListView(TemplateView):
     """View to list commissions"""
-    template_name = "commissions/commission_list.html"
+    template_name = "commissions/commissions_list.html"
 
 
 class CommissionDetailView(TemplateView):
     """View to show commissions details"""
-    template_name = "commissions/comission_detail.html"
+    template_name = "commissions/commissions_detail.html"
