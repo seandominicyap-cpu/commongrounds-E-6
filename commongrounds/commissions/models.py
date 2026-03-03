@@ -1,5 +1,4 @@
 from django.db import models
-
 # Create your models here.
 
 
@@ -10,6 +9,7 @@ class CommissionType(models.Model):
 
     class Meta:
         ordering = ['name']
+
 
 class Commission(models.Model):
     title = models.CharField(max_length=255)

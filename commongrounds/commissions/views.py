@@ -25,8 +25,8 @@ class CommissionDetailView(TemplateView):
         ctx = super().get_context_data(**kwargs)
         commission_id = int(self.kwargs.get('pk'))
         commission = Commission.objects.filter(pk=commission_id).first()
-        ctx["title"] = commission
-        ctx["type"] = commission
-        ctx["people_required"] = commission
-        ctx["description"] = commission
+        ctx["title"] = commission.title
+        ctx["type"] = commission.commission_type.name
+        ctx["people_required"] = commission.people_required
+        ctx["description"] = commission.description
         return ctx

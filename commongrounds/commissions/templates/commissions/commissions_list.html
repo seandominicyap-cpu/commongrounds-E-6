@@ -5,7 +5,7 @@
     <h3> Commissions: </h3>
     <ul>
         {% for commission in commissions %}
-            <li><a href="/commission/{{commission.pk}}">{{commission.name}}</a></li>
+            <li><a href="/commissions/request/{{commission.pk}}">{{commission.title}}</a></li>
         {% endfor %}
     </ul>
 {% endblock %}
