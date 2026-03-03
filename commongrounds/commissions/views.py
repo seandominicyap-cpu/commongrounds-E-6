@@ -1,6 +1,6 @@
 """Views for commissions project"""
 from django.shortcuts import render
-from .models imnport Commission, CommissionType
+from .models import Commission, CommissionType
 from django.views.generic import TemplateView
 # Create your views here.
 
@@ -20,11 +20,11 @@ class CommissionDetailView(TemplateView):
     """View to show commissions details"""
     template_name = "commissions/commissions_detail.html"
 
-        def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs):
         """Get context data."""
         ctx = super().get_context_data(**kwargs)
         commission_id = int(self.kwargs.get('pk'))
-        commission = Recipe.objects.filter(pk=recipe_id).first()
+        commission = Commission.objects.filter(pk=commission_id).first()
         ctx["title"] = commission
         ctx["type"] = commission
         ctx["people_required"] = commission
