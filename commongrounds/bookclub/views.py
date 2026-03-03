@@ -1,10 +1,11 @@
 from django.shortcuts import render
+from .models import Book
 
 # Create your views here.
 
 
 def book_list(request):
-    book = Book.objects.all()
+    books = Book.objects.all()
     ctx = {
         'books': books
     }
