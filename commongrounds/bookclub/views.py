@@ -1,10 +1,18 @@
-from django.urls import path
-
-from .views import index
-
-urlpatterns = [
-    path('', index, name='index')
-]
-
+from django.shortcuts import render
 
 # Create your views here.
+
+
+def book_list(request):
+    book = Book.objects.all()
+    ctx = {
+        'books': books
+    }
+
+    return render(request, 'bookclub/book_list.html', ctx)
+
+
+def book_detail(request, id):
+    ctx = {'book': Book.objects.get(id=id)}
+
+    return render(request, 'bookclub/book_detail.html', ctx)
