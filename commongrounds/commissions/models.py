@@ -13,6 +13,13 @@ class CommissionType(models.Model):
 
 class Commission(modesl.Model):
     title = models.CharField(max_length=255)
+    commission_type = models.ForeignKey(
+        CommissionType,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name=commissions
+    )
     description = models.TextField()
     people_required = models.IntegerField()
     created_on = models.DateTimeField(auto_now_add=True)
