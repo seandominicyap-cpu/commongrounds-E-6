@@ -11,14 +11,14 @@ class CommissionType(models.Model):
     class Meta:
         ordering = ['name']
 
-class Commission(modesl.Model):
+class Commission(models.Model):
     title = models.CharField(max_length=255)
     commission_type = models.ForeignKey(
         CommissionType,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name=commissions
+        related_name="commissions"
     )
     description = models.TextField()
     people_required = models.IntegerField()
