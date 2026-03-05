@@ -1,12 +1,12 @@
-"""Views for commissions project"""
-from django.shortcuts import render
-from .models import Commission, CommissionType
+"""Views for commissions project."""
+from .models import Commission
 from django.views.generic import TemplateView
 # Create your views here.
 
 
 class CommissionListView(TemplateView):
-    """View to list commissions"""
+    """View to list commissions."""
+
     template_name = "commissions/commissions_list.html"
 
     def get_context_data(self, **kwargs):
@@ -17,7 +17,8 @@ class CommissionListView(TemplateView):
 
 
 class CommissionDetailView(TemplateView):
-    """View to show commissions details"""
+    """View to show commissions details."""
+
     template_name = "commissions/commissions_detail.html"
 
     def get_context_data(self, **kwargs):
