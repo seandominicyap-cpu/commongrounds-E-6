@@ -2,7 +2,7 @@
 
 {% block content %}
     <h1>{{ project.title }}</h1>
-
+    <p><strong>Category:</strong> {{ project.category.name|default:"General" }}</p>
     <hr>
 
     <h3>About this Project</h3>
