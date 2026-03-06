@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% block heading_text %} {{ event.title }} {% endblock %}
-
 {% block content %}
 <p><strong>Category:</strong>{{ event.category.name if event.category else "No Category" }}</p>
 <p><strong>Description:</strong>{{ event.description }}</p>
