@@ -1,33 +1,38 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block content %}
+<h1>{{ project.title }}</h1>
+<p>
+    <strong>Category:</strong>
+    {{ project.category.name|default:"General" }}
+</p>
+<hr />
 
-{% block content %}
-    <h1>{{ project.title }}</h1>
-    <p><strong>Category:</strong> {{ project.category.name|default:"General" }}</p>
-    <hr>
+<h3>About this Project</h3>
+<p>{{ project.description }}</p>
 
-    <h3>About this Project</h3>
-    <p>{{ project.description }}</p>
+<h3>Materials Needed</h3>
+<ul>
+    {% for item in project.get_materials_list %}
+    <li>{{ item }}</li>
+    {% endfor %}
+</ul>
 
-    <h3>Materials Needed</h3>
-    <ul>
-        {% for item in project.get_materials_list %}
-            <li>{{ item }}</li>
-        {% endfor %}
-    </ul>
+<h3>Steps</h3>
+<ol>
+    {% for step in project.get_steps_list %}
+    <li>{{ step }}</li>
+    {% endfor %}
+</ol>
 
-    <h3>Steps</h3>
-    <ol>
-        {% for step in project.get_steps_list %}
-            <li>{{ step }}</li>
-        {% endfor %}
-    </ol>
+<hr />
 
-    <hr>
+<p>
+    <small>Last Created:</small>
+    {{ project.created_on|date:"F j, Y" }}
+</p>
+<p>
+    <small>Last Updated:</small>
+    {{ project.updated_on|date:"F j, Y" }}
+</p>
 
-    <p><small>Last Created:</small> {{ project.created_on|date:"F j, Y" }}</p>
-    <p><small>Last Updated:</small> {{ project.updated_on|date:"F j, Y" }}</p>
-
-    <a href="{% url 'diyprojects:project_list' %}">Back to All Projects</a>
+<a href="{% url 'diyprojects:project_list' %}">Back to All Projects</a>
 {% endblock %}
-
-

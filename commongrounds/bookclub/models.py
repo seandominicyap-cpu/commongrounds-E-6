@@ -8,7 +8,7 @@ class Genre(models.Model):
     description = models.TextField(blank=True)
 
     class Meta:
-        ordering = ['name']
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
@@ -17,10 +17,7 @@ class Genre(models.Model):
 class Book(models.Model):
     title = models.CharField(max_length=255)
     genre = models.ForeignKey(
-        Genre,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name='books'
+        Genre, on_delete=models.SET_NULL, null=True, related_name="books"
     )
     author = models.CharField(max_length=255)
     publication_year = models.IntegerField()
@@ -28,10 +25,10 @@ class Book(models.Model):
     updated_on = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-publication_year']
+        ordering = ["-publication_year"]
 
     def __str__(self):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('bookclub:book_detail', kwargs={'id': self.id})
+        return reverse("bookclub:book_detail", kwargs={"id": self.id})

@@ -1,5 +1,5 @@
 from django.db import models
-from django.urls import reverse 
+from django.urls import reverse
 
 
 class EventType(models.Model):
@@ -15,7 +15,9 @@ class EventType(models.Model):
 
 class Event(models.Model):
     title = models.CharField(max_length=50)
-    category = models.ForeignKey(EventType, on_delete=models.SET_NULL, null=True, blank=True)
+    category = models.ForeignKey(
+        EventType, on_delete=models.SET_NULL, null=True, blank=True
+    )
     description = models.TextField()
     location = models.CharField(max_length=50)
     start_time = models.DateTimeField()
@@ -28,6 +30,6 @@ class Event(models.Model):
 
     def __str__(self):
         return self.title
-    
+
     def get_absolute_url(self):
         return reverse("event_detail", args=[str(self.id)])

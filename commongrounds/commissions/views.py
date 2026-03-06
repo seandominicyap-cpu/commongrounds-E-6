@@ -1,4 +1,5 @@
 """Views for commissions project."""
+
 from .models import Commission
 from django.views.generic import TemplateView
 # Create your views here.
@@ -24,7 +25,7 @@ class CommissionDetailView(TemplateView):
     def get_context_data(self, **kwargs):
         """Get context data."""
         ctx = super().get_context_data(**kwargs)
-        commission_id = int(self.kwargs.get('pk'))
+        commission_id = int(self.kwargs.get("pk"))
         commission = Commission.objects.filter(pk=commission_id).first()
         ctx["title"] = commission.title
         ctx["type"] = commission.commission_type.name

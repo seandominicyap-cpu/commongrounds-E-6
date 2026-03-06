@@ -1,12 +1,31 @@
-{% extends 'base.html' %}
-{% block heading_text %} {{ event.title }} {% endblock %}
-{% block content %}
-<p><strong>Category:</strong> {{ event.category.name|default:"No Category" }}</p>
-<p><strong>Description:</strong>{{ event.description }}</p>
-<p><strong>Location:</strong>{{ event.location }}</p>
-<p><strong>Start:</strong>{{ event.start_time|date:"Y-m-d" }}</p>
-<p><strong>End:</strong>{{ event.end_time|date:"Y-m-d" }}</p>
-<p><strong>Created On:</strong>{{ event.created_on|date:"Y-m-d" }}</p>
-<p><strong>Last Updated:</strong>{{ event.updated_on|date:"Y-m-d" }}</p>
+{% extends 'base.html' %} {% block heading_text %} {{ event.title }} {% endblock %} {% block content %}
+<p>
+    <strong>Category:</strong>
+    {{ event.category.name|default:"No Category" }}
+</p>
+<p>
+    <strong>Description:</strong>
+    {{ event.description }}
+</p>
+<p>
+    <strong>Location:</strong>
+    {{ event.location }}
+</p>
+<p>
+    <strong>Start:</strong>
+    {{ event.start_time|date:"Y-m-d" }}
+</p>
+<p>
+    <strong>End:</strong>
+    {{ event.end_time|date:"Y-m-d" }}
+</p>
+<p>
+    <strong>Created On:</strong>
+    {{ event.created_on|date:"Y-m-d" }}
+</p>
+<p>
+    <strong>Last Updated:</strong>
+    {{ event.updated_on|date:"Y-m-d" }}
+</p>
 <p><a href="{% url 'event_list' %}">Back to Events</a></p>
 {% endblock %}

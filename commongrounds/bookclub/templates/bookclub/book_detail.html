@@ -1,15 +1,28 @@
-{% extends 'base.html' %}
-{% block heading_text %}
-{{ book.name }} 
-{% endblock %}
-
-{% block content %}
-<p><strong>Title:</strong> {{ book.title }}</p>
-<p><strong>Genre:</strong> {{ book.genre.name }}</p>
-<p><strong>Author:</strong> {{ book.author }}</p>
-<p><strong>Publication Year:</strong> {{ book.publication_year }}</p>
-<p><strong>Created On:</strong> {{ book.created_on }}</p>
-<p><strong>Updated On:</strong> {{ book.updated_on }}</p>
+{% extends 'base.html' %} {% block heading_text %} {{ book.name }} {% endblock %} {% block content %}
+<p>
+    <strong>Title:</strong>
+    {{ book.title }}
+</p>
+<p>
+    <strong>Genre:</strong>
+    {{ book.genre.name }}
+</p>
+<p>
+    <strong>Author:</strong>
+    {{ book.author }}
+</p>
+<p>
+    <strong>Publication Year:</strong>
+    {{ book.publication_year }}
+</p>
+<p>
+    <strong>Created On:</strong>
+    {{ book.created_on }}
+</p>
+<p>
+    <strong>Updated On:</strong>
+    {{ book.updated_on }}
+</p>
 
 <p><a href="{% url 'bookclub:book_list' %}">Back to list</a></p>
 {% endblock %}

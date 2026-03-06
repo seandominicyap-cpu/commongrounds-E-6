@@ -1,4 +1,5 @@
 """Models of commmissions app."""
+
 from django.db import models
 # Create your models here.
 
@@ -12,7 +13,7 @@ class CommissionType(models.Model):
     class Meta:
         """Class that provides ordering of commission types."""
 
-        ordering = ['name']
+        ordering = ["name"]
 
 
 class Commission(models.Model):
@@ -24,7 +25,7 @@ class Commission(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="commissions"
+        related_name="commissions",
     )
     description = models.TextField()
     people_required = models.IntegerField()
@@ -34,4 +35,4 @@ class Commission(models.Model):
     class Meta:
         """Class that provides ordering of commissions."""
 
-        ordering = ['created_on']
+        ordering = ["created_on"]

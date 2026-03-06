@@ -9,12 +9,18 @@ class ProjectCategory(models.Model):
         return self.name
 
     class Meta:
-        ordering = ['-name']
+        ordering = ["-name"]
 
 
 class Project(models.Model):
     title = models.CharField(max_length=255)
-    category = models.ForeignKey(ProjectCategory, on_delete=models.CASCADE, related_name='category', null=True, blank=True)
+    category = models.ForeignKey(
+        ProjectCategory,
+        on_delete=models.CASCADE,
+        related_name="category",
+        null=True,
+        blank=True,
+    )
     description = models.TextField(blank=True)
     materials = models.TextField(blank=True)
     steps = models.TextField(blank=True)
@@ -31,4 +37,4 @@ class Project(models.Model):
         return self.steps.splitlines()
 
     class Meta:
-        ordering = ['created_on']
+        ordering = ["created_on"]

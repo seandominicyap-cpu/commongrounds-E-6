@@ -6,14 +6,12 @@ from .models import Book
 
 def book_list(request):
     books = Book.objects.all()
-    ctx = {
-        'books': books
-    }
+    ctx = {"books": books}
 
-    return render(request, 'bookclub/book_list.html', ctx)
+    return render(request, "bookclub/book_list.html", ctx)
 
 
 def book_detail(request, id):
-    ctx = {'book': Book.objects.get(id=id)}
+    ctx = {"book": Book.objects.get(id=id)}
 
-    return render(request, 'bookclub/book_detail.html', ctx)
+    return render(request, "bookclub/book_detail.html", ctx)
