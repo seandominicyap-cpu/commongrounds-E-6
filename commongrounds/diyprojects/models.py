@@ -26,6 +26,12 @@ class Project(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def get_materials_list(self):
+        return self.materials.splitlines()
+
+    def get_steps_list(self):
+        return self.steps.splitlines()
 
     class Meta: 
         ordering = ['-created_on']
