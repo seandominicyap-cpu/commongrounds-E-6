@@ -6,7 +6,6 @@ def event_list(request):
     ctx = {'events': events}
     return render(request, "localevents/events_list.html", ctx)
 
-
 def event_detail(request):
     ctx = {"event": Event.objects.get(id=id)}
     return render(request, "localevents/event_detail.html", ctx)
