@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>DIY Projects</h2>
+    <ul>
+    {% for project in projects %}
+        <li>
+            <a href="{% url 'diyprojects:project_detail' project.pk %}">{{ project.title }}</a> 
+            - {{ project.category.name|default:"Uncategorized" }}
+        </li>
+    {% empty %}
+        <li>No projects found.</li>
+    {% endfor %}
+    </ul>
+    <hr>
+{% endblock %}
