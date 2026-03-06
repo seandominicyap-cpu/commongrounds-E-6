@@ -1,0 +1,11 @@
+{% extends 'index.html' %}
+
+{% block body %}
+    <h2> Commissions list </h2>
+    <h3> Commissions: </h3>
+    <ul>
+        {% for commission in commissions %}
+            <li><a href="/commissions/request/{{commission.pk}}">{{commission.title}}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}
