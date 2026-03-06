@@ -9,6 +9,6 @@ class ProjectListView(ListView):
 class ProjectDetailView(DetailView):
     model = Project
     template_name = 'diyprojects/projects/project_detail.html'
-    context_object_name = 'projects'
+    context_object_name = 'project'
 
 
