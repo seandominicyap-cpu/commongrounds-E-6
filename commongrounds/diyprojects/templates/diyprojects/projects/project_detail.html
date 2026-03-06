@@ -1,4 +1,4 @@
-{% extends "diyprojects/base.html" %}
+{% extends "base.html" %}
 
 {% block content %}
     <h1>{{ project.title }}</h1>
@@ -24,8 +24,8 @@
 
     <hr>
 
-    <p><strong>Category:</strong> {{ project.category.name|default:"General" }}</p>
-    <p><strong>Last Updated:</strong> {{ project.updated_on|date:"M d, Y" }}</p>
+    <p><small>Last Created:</small> {{ project.created_on|date:"F j, Y" }}</p>
+    <p><small>Last Updated:</small> {{ project.updated_on|date:"F j, Y" }}</p>
 
     <a href="{% url 'diyprojects:project_list' %}">Back to All Projects</a>
 {% endblock %}

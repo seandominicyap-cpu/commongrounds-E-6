@@ -15,9 +15,9 @@ class Project(models.Model):
     title = models.CharField(max_length=255)
     category = models.ForeignKey(ProjectCategory, on_delete=models.CASCADE, related_name='category', null=True, blank=True)
     
-    description = models.TextField
-    materials = models.TextField
-    steps = models.TextField
+    description = models.TextField(blank=True)
+    materials = models.TextField(blank=True)
+    steps = models.TextField(blank=True)
 
     created_on = models.DateTimeField(auto_now_add=True)   
     updated_on = models.DateTimeField(auto_now_add=True)  
