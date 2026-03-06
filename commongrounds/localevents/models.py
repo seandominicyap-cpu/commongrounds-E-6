@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse 
 
+
 class EventType(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField
@@ -10,6 +11,7 @@ class EventType(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Event(models.Model):
     title = models.CharField(max_length=50)

@@ -2,6 +2,8 @@
 from django.contrib import admin
 from .models import CommissionType, Commission
 # Register your models here.
+
+
 class CommissionTypeAdmin(admin.ModelAdmin):
     model = CommissionType
 
