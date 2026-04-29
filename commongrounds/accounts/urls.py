@@ -1,8 +1,10 @@
 """URL configuration for commissions app."""
 
-from django.urls import path
+from django.urls import path, include
 from .views import AccountUpdateView
 
 urlpatterns = [
-    path("<str:username>/", AccountUpdateView.as_view(), name="accounts_update"),
+    path('', include('django.contrib.auth.urls')),
+
+    path('<str:username>/', AccountUpdateView.as_view(), name='accounts_update'),
 ]
