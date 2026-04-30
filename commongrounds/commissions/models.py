@@ -60,6 +60,8 @@ class Commission(models.Model):
     maker = models.ForeignKey(
         Profile,
         on_delete=models.CASCADE,
+        null=True,
+        blank=True
     )
     status = models.ForeignKey(
         JobStatus,
