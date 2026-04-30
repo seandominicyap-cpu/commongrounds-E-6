@@ -1,9 +1,10 @@
 from django.urls import reverse_lazy
 from django.views.generic import UpdateView
 from .models import Profile
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 # Create your views here.
-class AccountUpdateView(UpdateView):
+class AccountUpdateView(LoginRequiredMixin, UpdateView):
     model = Profile
     fields = ['display_name']
     template_name = 'profile_form.html'

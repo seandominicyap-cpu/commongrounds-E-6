@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 
-{% block content %}
-<p> Username: {{ object.user.username }}</p>
-<p> Current display name: {{ object.display_name }}</p>
-<h1>Edit Post</h1>
+{% block body %}
+    <p> Username: {{ object.user.username }}</p>
+    <p> Current display name: {{ object.display_name }}</p>
+    <h1>Edit Post</h1>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
-</form>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save</button>
+    </form>
 {% endblock %}

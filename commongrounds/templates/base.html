@@ -7,9 +7,17 @@
         <header>
             <h1>Common Grounds</h1>
         </header>
-        {% block login %}{% endblock %}
+        {% if request.user.is_authenticated%}
+            Hello, {{ request.user }}
+            <form method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+            <button type="submit">Logout</button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}">Login</a>
+        {% endif %}
         <h2>{% block heading_text %}{% endblock %}</h2>
 
-        <main>{% block content %}{% endblock %}</main>
+        <main>{% block body %}{% endblock %}</main>
     </body>
 </html>
