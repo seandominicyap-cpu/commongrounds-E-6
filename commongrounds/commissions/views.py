@@ -32,3 +32,13 @@ class CommissionDetailView(TemplateView):
         ctx["people_required"] = commission.people_required
         ctx["description"] = commission.description
         return ctx
+
+
+class CommissionCreateView(TemplateView):
+    """View to create commissions."""
+    template_name = "commissions/commissions_create.html"
+
+
+class CommissionUpdateView(TemplateView):
+    """View to update commissions."""
+    template_name = "commissions/commissions_update.html"

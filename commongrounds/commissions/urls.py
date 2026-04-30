@@ -1,9 +1,11 @@
 """URL configuration for commissions app."""
 
 from django.urls import path
-from .views import CommissionDetailView, CommissionListView
+from .views import CommissionDetailView, CommissionListView, CommissionCreateView, CommissionUpdateView
 
 urlpatterns = [
     path("requests/list", CommissionListView.as_view(), name="commission_detail"),
     path("request/<int:pk>", CommissionDetailView.as_view(), name="commission_list"),
+    path("request/add", CommissionCreateView.as_view(), name="commission_list"),
+    path("request/<int:pk>/edit", CommissionUpdateView.as_view(), name="commission_list"),
 ]
