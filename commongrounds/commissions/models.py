@@ -3,7 +3,34 @@
 from django.db import models
 from accounts.models import Profile
 # Create your models here.
+class JobStatus(models.Model):
+    name = models.CharField(max_length=20, unique=True)
+    order = models.PositiveIntegerField()
 
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return self.name
+
+
+class ApplicationStatus(models.Model):
+    name = models.CharField(max_length=20, unique=True)
+    order = models.PositiveIntegerField()
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return self.name
+
+    
+def get_default_job_status():
+    return JobStatus.objects.get(name='OPEN').id
+
+def get_default_application_status():
+    return JobStatus.objects.get(name='PENDING').id
+    
 
 class CommissionType(models.Model):
     """Model that represents commission type."""
@@ -19,10 +46,6 @@ class CommissionType(models.Model):
 
 class Commission(models.Model):
     """Model that represents commissions."""
-    STATUS_CHOICES = [
-        ('OPEN', 'Open'),
-        ('FULL', 'Full'),
-    ]
 
     title = models.CharField(max_length=255)
     commission_type = models.ForeignKey(
@@ -33,15 +56,15 @@ class Commission(models.Model):
         related_name="commissions",
     )
     description = models.TextField()
-    people_required = models.IntegerField()
+    people_required = models.PositiveIntegerField()
     maker = models.ForeignKey(
         Profile,
         on_delete=models.CASCADE,
     )
-    status = models.CharField(
-        max_length = 20,
-        choices = STATUS_CHOICES,
-        default = 'OPEN'
+    status = models.ForeignKey(
+        JobStatus,
+        on_delete=models.PROTECT,
+        default=get_default_job_status
     )
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
@@ -50,3 +73,46 @@ class Commission(models.Model):
         """Class that provides ordering of commissions."""
 
         ordering = ["created_on"]
+
+
+class Job(models.Model):
+    commission = models.ForeignKey(
+        Commission,
+        on_delete = models.CASCADE,
+        related_name = 'jobs'
+    )
+
+    role = models.CharField(max_length=255)
+    manpower_required = models.PositiveIntegerField()
+    status = models.ForeignKey(
+        JobStatus,
+        on_delete=models.PROTECT,
+        default=get_default_job_status
+    )
+
+    class Meta:
+        ordering = ["-status", "-manpower_required", "role"]
+
+
+class JobApplication(models.Model):
+    job = models.ForeignKey(
+        Job,
+        on_delete = models.CASCADE,
+        related_name = 'job_applications'
+    )
+    applicant = models.ForeignKey(
+        Profile,
+        on_delete = models.CASCADE,
+        related_name = 'job_applications'
+    )
+    status = models.ForeignKey(
+        ApplicationStatus,
+        on_delete = models.PROTECT,
+        related_name = "job_applications",
+        default = get_default_job_status
+    )
+    applied_on = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['status', '-applied_on']
+
