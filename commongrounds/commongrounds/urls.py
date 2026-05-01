@@ -24,9 +24,6 @@ urlpatterns = [
     path("bookclub/", include("bookclub.urls", namespace="bookclub")),
     path("localevents/", include("localevents.urls")),
     path("diyprojects/", include("diyprojects.urls")),
-    path(
-        "commissions/",
-        include(("commissions.urls", "commissions"), namespace="commissions"),
-    ),
+    path("commissions/", include("commissions.urls")),
     path("merchstore/", include("merchstore.urls")),
 ]
