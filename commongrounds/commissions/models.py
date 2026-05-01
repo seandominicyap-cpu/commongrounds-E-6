@@ -66,6 +66,7 @@ class Commission(models.Model):
     status = models.ForeignKey(
         JobStatus,
         on_delete=models.PROTECT,
+        null=True,
         default=get_default_job_status
     )
     created_on = models.DateTimeField(auto_now_add=True)
@@ -89,6 +90,7 @@ class Job(models.Model):
     status = models.ForeignKey(
         JobStatus,
         on_delete=models.PROTECT,
+        null=True,
         default=get_default_job_status
     )
 
@@ -111,7 +113,8 @@ class JobApplication(models.Model):
         ApplicationStatus,
         on_delete = models.PROTECT,
         related_name = "job_applications",
-        default = get_default_job_status
+        null=True,
+        default=get_default_application_status
     )
     applied_on = models.DateTimeField(auto_now_add=True)
 
