@@ -24,7 +24,10 @@
                 {% if job.accepted_count >= job.manpower_required %}
                     <button disabled>Full</button>
                 {% else %}
-                    <a href="https://www.youtube.com/watch?v=2MgAyfXCC0M">Apply</a>
+                    <form method="post" action="{% url 'commissions:apply_to_job' job.pk %}">
+                        {% csrf_token %}
+                        <button type="submit">Apply to Job</button>
+                    </form>
                 {% endif %}
             </td>
         </tr>

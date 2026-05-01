@@ -1,6 +1,6 @@
 from django.forms import inlineformset_factory
 from django import forms
-from .models import Commission, Job
+from .models import Commission, Job, JobApplication
 
 JobFormSet = inlineformset_factory(
     Commission,
@@ -9,6 +9,13 @@ JobFormSet = inlineformset_factory(
     extra=0,
     can_delete=True,
 )
+
+
+class JobApplicationForm(forms.ModelForm):
+    class Meta:
+        model = JobApplication
+        fields = []
+
 
 class CommissionForm(forms.ModelForm):
     class Meta:
@@ -19,3 +26,5 @@ class CommissionForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         self.fields["maker"].disabled = True
+
+        

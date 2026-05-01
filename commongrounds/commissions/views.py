@@ -1,12 +1,14 @@
 """Views for commissions project."""
 
 from .models import Commission, JobApplication, Job, ApplicationStatus
-from django.views.generic import TemplateView, CreateView, UpdateView
-from django.shortcuts import get_object_or_404
+from django.views.generic import TemplateView, CreateView, UpdateView, View
+from django.shortcuts import get_object_or_404, redirect
 from django.db.models import Sum, Q, Count
 from django.contrib.auth.mixins import LoginRequiredMixin
 from accounts.mixins import RoleRequiredMixin
 from .forms import JobFormSet, CommissionForm
+from django.http import HttpResponseForbidden
+
 from .services import update_commission_status
 # Create your views here.
 
@@ -153,3 +155,34 @@ class CommissionUpdateView(LoginRequiredMixin, RoleRequiredMixin, UpdateView):
         else:
             return self.render_to_response(self.get_context_data(form=form))
 
+
+class ApplyToJobView(LoginRequiredMixin, View):
+
+    def post(self, request, pk):
+        job = get_object_or_404(Job, pk=pk)
+
+        already_applied = JobApplication.objects.filter(
+            job=job,
+            applicant=request.user.profile
+        ).exists()
+
+        if already_applied:
+            return HttpResponseForbidden("You already applied for this job")
+
+        accepted_status = ApplicationStatus.objects.get(name="ACCEPTED")
+
+        accepted_count = JobApplication.objects.filter(
+            job=job,
+            status=accepted_status
+        ).count()
+
+        if accepted_count >= job.manpower_required:
+            return HttpResponseForbidden("Job is full")
+
+        JobApplication.objects.create(
+            job=job,
+            applicant=request.user.profile,
+            status=ApplicationStatus.objects.get(name="PENDING")
+        )
+
+        return redirect("commissions:commission_detail", pk=job.commission.pk)
