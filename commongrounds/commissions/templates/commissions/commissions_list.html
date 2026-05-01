@@ -1,5 +1,23 @@
 {% extends 'index.html' %} 
+{% block script %}
+<script>
+document.getElementById("add-job").addEventListener("click", function () {
+    const container = document.getElementById("job-forms");
+    const totalForms = document.getElementById("id_job_set-TOTAL_FORMS");
 
+    let index = parseInt(totalForms.value);
+
+    let newForm = container.children[0].cloneNode(true);
+
+    newForm.innerHTML = newForm.innerHTML.replace(/-\d+-/g, `-${index}-`);
+
+    container.appendChild(newForm);
+
+    totalForms.value = index + 1;
+});
+</script>
+
+{% endblock %}
 {% block body %}
 <h2>Commissions list</h2>
 {% if request.user.is_authenticated %}

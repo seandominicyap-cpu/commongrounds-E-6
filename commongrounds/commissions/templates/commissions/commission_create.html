@@ -1,9 +1,50 @@
 {% extends 'index.html' %} 
+{% block script %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    document.getElementById("add-job").addEventListener("click", function () {
+        const container = document.getElementById("job-forms");
+        const totalForms = document.getElementById("id_jobs-TOTAL_FORMS");
+
+        let index = parseInt(totalForms.value);
+        let newForm = container.children[0].cloneNode(true);
+        newForm.innerHTML = newForm.innerHTML.replace(/jobs-(\d+)-/g, `jobs-${index}-`);
+        newForm.querySelectorAll("input, select, textarea").forEach(el => {
+            if (el.type !== "hidden") {
+                el.value = "";
+            }
+        });
+
+        container.appendChild(newForm);
+
+        totalForms.value = index + 1;
+    });
+
+});
+</script>
+
+{% endblock %}
 
 {% block body %}
 <form method="post">
     {% csrf_token %}
+
     {{ form.as_p }}
+
+    <h3>Jobs</h3>
+
+    {{ job_formset.management_form }}
+    <div id="job-forms">
+        {% for form in job_formset %}
+            <div class="job-form">
+                {{ form.as_p }}
+            </div>
+        {% endfor %}
+    </div>
+
+    <button type="button" id="add-job">+ Add Job</button>
+
     <button type="submit">Create</button>
 </form>
 {% endblock %}

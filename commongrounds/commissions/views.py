@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Sum, Q, Count
 from django.contrib.auth.mixins import LoginRequiredMixin
 from accounts.mixins import RoleRequiredMixin
-
+from .forms import JobFormSet, CommissionForm
 # Create your views here.
 
 
@@ -87,17 +87,34 @@ class CommissionDetailView(TemplateView):
 
 
 class CommissionCreateView(LoginRequiredMixin, RoleRequiredMixin, CreateView):
-    model = Commission
     """View to create commissions."""
+    model = Commission
+    form_class = CommissionForm
     template_name = "commissions/commission_create.html"
-    fields = ['title', 'commission_type', 'description', 'people_required', 'status']
     success_url = "/commissions/requests/list"
+    
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        if self.request.POST:
+            ctx["job_formset"] = JobFormSet(self.request.POST)
+        else:
+            ctx["job_formset"] = JobFormSet()
+
+        return ctx
 
     def form_valid(self, form):
         form.instance.maker = self.request.user.profile
-        return super().form_valid(form)
+        response = super().form_valid(form)
 
+        job_formset = JobFormSet(self.request.POST, instance=self.object)
 
+        if job_formset.is_valid():
+            job_formset.save()
+        else:
+            print(job_formset.errors)
+
+        return response
 
     
 class CommissionUpdateView(LoginRequiredMixin, RoleRequiredMixin, TemplateView):
