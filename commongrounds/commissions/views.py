@@ -1,6 +1,6 @@
 """Views for commissions project."""
 
-from .models import Commission
+from .models import Commission, JobApplication, Job
 from django.views.generic import TemplateView
 # Create your views here.
 
@@ -13,7 +13,27 @@ class CommissionListView(TemplateView):
     def get_context_data(self, **kwargs):
         """Get context data."""
         ctx = super().get_context_data(**kwargs)
-        ctx["commissions"] = Commission.objects.all()
+        user = self.request.user
+
+        if user.is_authenticated:
+            user_profile = user.profile
+            created = Commission.objects.filter(maker=user_profile)
+            applied = Commission.objects.filter(
+                        jobs__job_applications__applicant=user_profile
+                    ).distinct()
+            other = Commission.objects.exclude(
+                id__in=created.values("id")
+            ).exclude(
+                id__in=applied.values("id")
+            )
+        else:
+            created = Commission.objects.none()
+            applied = Commission.objects.none()
+            other = Commission.objects.all()
+        
+        ctx["created_commissions"] = created
+        ctx["applied_commissions"] = applied
+        ctx["other_commissions"] = other
         return ctx
 
 

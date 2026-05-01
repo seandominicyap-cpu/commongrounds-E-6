@@ -1,9 +1,35 @@
-{% extends 'index.html' %} {% block body %}
+{% extends 'index.html' %} 
+
+{% block body %}
 <h2>Commissions list</h2>
 <h3>Commissions:</h3>
+{% if request.user.is_authenticated %}
+<h4>Created Commissions</h4>
 <ul>
-    {% for commission in commissions %}
-    <li><a href="/commissions/request/{{commission.pk}}">{{commission.title}}</a></li>
+    {% for commission in created_commissions %}
+        <li><a href="{% url 'commission_detail' commission.pk %}">{{commission.title}}</a></li>
+    {% empty %}
+        <li>No created commissions</li>
     {% endfor %}
 </ul>
+<hr>
+<h4>Applied Commissions</h4>
+<ul>
+    {% for commission in applied_commissions %}
+        <li><a href="{% url 'commission_detail' commission.pk %}">{{commission.title}}</a></li>
+    {% empty %}
+        <li>No applied commissions</li>
+    {% endfor %}
+</ul>
+<hr>
+{% end if %}
+<h4>Other Commissions </h4>
+<ul>
+    {% for commission in other_commissions %}
+        <li><a href="{% url 'commission_detail' commission.pk %}">{{commission.title}}</a></li>
+    {% empty %}
+        <li>No other commissions</li>
+    {% endfor %}
+</ul>
+
 {% endblock %}
