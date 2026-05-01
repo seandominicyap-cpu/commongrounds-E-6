@@ -3,6 +3,7 @@
 <h3>{{title}}</h3>
 <p>Maker: {{maker.display_name}}</p>
 <p>Type: {{type}}</p>
+<p>Status: {{status}}</p>
 <p>People required: {{people_required}}</p>
 <p>Description: {{description}}</p>
 <table border="1">
@@ -31,10 +32,10 @@
     </tbody>
 </table>
 <p> Total manpower: {{total_manpower}}</p>
-<p> Signed manpower: {{signed_manpower}}</p>
+<p> Open manpower: {{open_manpower}}</p>
 {% if request.user.profile != maker %}
-    <button disabled>Update Commission</button>
+    <a disabled>Create Commission</a>
 {% else %}
-    <button>Update Commission</button>
+    <a href="{% url 'commissions:commission_update' pk %}">Update Commission</a>
 {% endif %}
 {% endblock %}

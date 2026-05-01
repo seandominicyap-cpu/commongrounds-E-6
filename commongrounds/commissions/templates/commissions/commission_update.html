@@ -1,5 +1,26 @@
 {% extends 'index.html' %} 
 
 {% block body %}
-<p> Under construction desu~ </p>
+<form method="post">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <h3>Jobs</h3>
+
+    {{ job_formset.management_form }}
+
+    <div id="job-forms">
+        {% for form in job_formset %}
+            <div class="job-form">
+                {{ form.as_p }}
+                {% if form.instance.pk %}
+                    {{ form.DELETE }} Delete
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+
+    <button type="submit">Save</button>
+</form>
 {% endblock %}

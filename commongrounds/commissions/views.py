@@ -1,12 +1,13 @@
 """Views for commissions project."""
 
 from .models import Commission, JobApplication, Job, ApplicationStatus
-from django.views.generic import TemplateView, CreateView
+from django.views.generic import TemplateView, CreateView, UpdateView
 from django.shortcuts import get_object_or_404
 from django.db.models import Sum, Q, Count
 from django.contrib.auth.mixins import LoginRequiredMixin
 from accounts.mixins import RoleRequiredMixin
 from .forms import JobFormSet, CommissionForm
+from .services import update_commission_status
 # Create your views here.
 
 
@@ -53,6 +54,7 @@ class CommissionDetailView(TemplateView):
         commission_id = int(self.kwargs.get("pk"))
         commission = get_object_or_404(Commission, pk=commission_id)
         maker = commission.maker or None
+        status = commission.status.__str__
         jobs = Job.objects.filter( 
             commission = commission 
         ).annotate( 
@@ -73,6 +75,7 @@ class CommissionDetailView(TemplateView):
             status=accepted_status
         ).count()
 
+        open_manpower = total_manpower - signed_manpower
 
         ctx["title"] = commission.title
         ctx["description"] = commission.description
@@ -81,8 +84,10 @@ class CommissionDetailView(TemplateView):
         ctx["jobs"] = jobs
         ctx["status"] = commission.status
         ctx["total_manpower"] = total_manpower
-        ctx["signed_manpower"] = signed_manpower
+        ctx["open_manpower"] = open_manpower
         ctx["maker"] = maker
+        ctx["pk"] = commission_id
+        ctx["status"] = status
         return ctx
 
 
@@ -117,6 +122,34 @@ class CommissionCreateView(LoginRequiredMixin, RoleRequiredMixin, CreateView):
         return response
 
     
-class CommissionUpdateView(LoginRequiredMixin, RoleRequiredMixin, TemplateView):
+class CommissionUpdateView(LoginRequiredMixin, RoleRequiredMixin, UpdateView):
     """View to update commissions."""
-    template_name = "commissions/commissions_update.html"
+    model = Commission
+    form_class = CommissionForm
+    template_name = "commissions/commission_update.html"
+    success_url = "/commissions/requests/list"
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        if self.request.POST:
+            ctx["job_formset"] = JobFormSet(self.request.POST, instance=self.object)
+        else:
+            ctx["job_formset"] = JobFormSet(instance=self.object)
+
+        return ctx
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        job_formset = context["job_formset"]
+
+        if job_formset.is_valid():
+            self.object = form.save()
+            job_formset.instance = self.object
+            job_formset.save()
+
+            update_commission_status(self.object)
+            
+            return super().form_valid(form)
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
+

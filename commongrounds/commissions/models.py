@@ -41,7 +41,7 @@ class CommissionType(models.Model):
     def __str__(self):
         return self.name
     
-    
+
     class Meta:
         """Class that provides ordering of commission types."""
 
@@ -78,6 +78,16 @@ class Commission(models.Model):
     def __str__(self):
         return self.name
     
+    def refresh_status(self):
+        full = JobStatus.objects.get(name="FULL")
+
+        if self.jobs.exists() and all(j.status == full for j in self.jobs.all()):
+            self.status = full
+        else:
+            self.status = JobStatus.objects.get(name="OPEN")
+
+        self.save(update_fields=["status"])
+
 
     class Meta:
         """Class that provides ordering of commissions."""
