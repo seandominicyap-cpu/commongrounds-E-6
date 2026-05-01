@@ -1,5 +1,9 @@
 {% extends 'index.html' %} 
 
 {% block body %}
-<p> Under construction desu~ </p>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Create</button>
+</form>
 {% endblock %}

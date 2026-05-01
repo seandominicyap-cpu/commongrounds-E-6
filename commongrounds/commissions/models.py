@@ -38,6 +38,10 @@ class CommissionType(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
 
+    def __str__(self):
+        return self.name
+    
+    
     class Meta:
         """Class that provides ordering of commission types."""
 
@@ -71,13 +75,16 @@ class Commission(models.Model):
     )
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.name
+    
 
     class Meta:
         """Class that provides ordering of commissions."""
 
         ordering = ["created_on"]
 
-
+        
 class Job(models.Model):
     commission = models.ForeignKey(
         Commission,

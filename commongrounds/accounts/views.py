@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .mixins import RoleRequiredMixin
 
 # Create your views here.
-class AccountUpdateView(LoginRequiredMixin, RoleRequiredMixin, UpdateView):
+class AccountUpdateView(LoginRequiredMixin, UpdateView):
     model = Profile
     fields = ['display_name']
     template_name = 'profile_form.html'

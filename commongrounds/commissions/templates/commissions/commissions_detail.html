@@ -1,7 +1,40 @@
 {% extends 'index.html' %} {% block body %}
 <h2>Commissions detail</h2>
 <h3>{{title}}</h3>
+<p>Maker: {{maker.display_name}}</p>
 <p>Type: {{type}}</p>
 <p>People required: {{people_required}}</p>
 <p>Description: {{description}}</p>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Role</th>
+            <th>Manpower Required</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for job in jobs %}
+        <tr>
+            <td>{{ job.role }}</td>
+            <td>{{ job.manpower_required }}</td>
+            <td>
+                {% if job.accepted_count >= job.manpower_required %}
+                    <button disabled>Full</button>
+                {% else %}
+                    <a href="https://www.youtube.com/watch?v=2MgAyfXCC0M">Apply</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<p> Total manpower: {{total_manpower}}</p>
+<p> Signed manpower: {{signed_manpower}}</p>
+{% if request.user.profile != maker %}
+    <button disabled>Update Commission</button>
+{% else %}
+    <button>Update Commission</button>
+{% endif %}
 {% endblock %}

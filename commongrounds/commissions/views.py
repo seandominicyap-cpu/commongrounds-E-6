@@ -1,7 +1,12 @@
 """Views for commissions project."""
 
-from .models import Commission, JobApplication, Job
-from django.views.generic import TemplateView
+from .models import Commission, JobApplication, Job, ApplicationStatus
+from django.views.generic import TemplateView, CreateView
+from django.shortcuts import get_object_or_404
+from django.db.models import Sum, Q, Count
+from django.contrib.auth.mixins import LoginRequiredMixin
+from accounts.mixins import RoleRequiredMixin
+
 # Create your views here.
 
 
@@ -46,19 +51,55 @@ class CommissionDetailView(TemplateView):
         """Get context data."""
         ctx = super().get_context_data(**kwargs)
         commission_id = int(self.kwargs.get("pk"))
-        commission = Commission.objects.filter(pk=commission_id).first()
+        commission = get_object_or_404(Commission, pk=commission_id)
+        maker = commission.maker or None
+        jobs = Job.objects.filter( 
+            commission = commission 
+        ).annotate( 
+            accepted_count=Count(
+                "job_applications",
+                filter=Q(job_applications__status__name="ACCEPTED")
+            )
+        )
+        total_manpower = (
+            Job.objects.filter(commission=commission)
+            .aggregate(total=Sum("manpower_required"))
+        )["total"] or 0
+        
+        accepted_status = ApplicationStatus.objects.get(name="ACCEPTED")
+
+        signed_manpower = JobApplication.objects.filter(
+            job__commission = commission,
+            status=accepted_status
+        ).count()
+
+
         ctx["title"] = commission.title
+        ctx["description"] = commission.description
         ctx["type"] = commission.commission_type.name
         ctx["people_required"] = commission.people_required
-        ctx["description"] = commission.description
+        ctx["jobs"] = jobs
+        ctx["status"] = commission.status
+        ctx["total_manpower"] = total_manpower
+        ctx["signed_manpower"] = signed_manpower
+        ctx["maker"] = maker
         return ctx
 
 
-class CommissionCreateView(TemplateView):
+class CommissionCreateView(LoginRequiredMixin, RoleRequiredMixin, CreateView):
+    model = Commission
     """View to create commissions."""
-    template_name = "commissions/commissions_create.html"
+    template_name = "commissions/commission_create.html"
+    fields = ['title', 'commission_type', 'description', 'people_required', 'status']
+    success_url = "/commissions/requests/list"
+
+    def form_valid(self, form):
+        form.instance.maker = self.request.user.profile
+        return super().form_valid(form)
 
 
-class CommissionUpdateView(TemplateView):
+
+    
+class CommissionUpdateView(LoginRequiredMixin, RoleRequiredMixin, TemplateView):
     """View to update commissions."""
     template_name = "commissions/commissions_update.html"
