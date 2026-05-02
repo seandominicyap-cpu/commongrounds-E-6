@@ -58,11 +58,31 @@ class EventDetailView(DetailView):
         ctx["user_signed_up"] = user_signed_up
         return ctx
 
+    def post(self, request, *args, **kwargs):
+        event = self.get_object()
+        user = request.user
+        if not user.is_authenticated:
+            return redirect("event_signup", pk=event.pk)
+        profile = user.profile
 
-class EventCreateView(LoginRequiredMixin, CreateView):
-    allowed_roles = []
+        if event.organizers.filter(id=profile.id).exists():
+            return redirect("event_detail", pk=event.pk)
+        if EventSignup.objects.filter(event=event, user_registrant=profile).exists():
+            return redirect("event_detail", pk=event.pk)
+        if event.signups.count() >= event.event_capacity:
+            return redirect("event_detail", pk=event.pk)
+        
+        EventSignup.objects.create(event=event, user_registrant=profile)
+        if event.signups.count() >= event.event_capacity:
+            event.status = Event.STATUS_FULL
+            event.save()
+        return redirect("event_detail", pk=event.pk)
+
+
+class EventCreateView(LoginRequiredMixin, RoleRequiredMixin, CreateView):
+    allowed_roles = ["Event Organizer"]
     model = Event 
-    fields = ["title", "category", "event_image", "description", "location", "start_time", "end_time", "event_capacity", "status"]
+    fields = ["title", "category", "event_image", "description", "location", "start_time", "end_time", "event_capacity"]
     template_name = "localevents/event_create.html"
     success_url = reverse_lazy("event_list")
 
@@ -72,8 +92,8 @@ class EventCreateView(LoginRequiredMixin, CreateView):
         return response 
     
 
-class EventUpdateView(LoginRequiredMixin, UpdateView):
-    allowed_roles = []
+class EventUpdateView(LoginRequiredMixin, RoleRequiredMixin, UpdateView):
+    allowed_roles = ["Event Organizer"]
     model = Event
     fields = ["title", "category", "event_image", "description", "location", "start_time", "end_time", "event_capacity"]
     template_name = "localevents/event_update.html"
@@ -93,27 +113,29 @@ class EventUpdateView(LoginRequiredMixin, UpdateView):
     
 
 class EventSignupView(View):
-    def get(self, request, event_id):
+    def get(self, request, pk):
         if request.user.is_authenticated:
-            return redirect("event_detail", pk=event_id)
+            return redirect("event_detail", pk=pk)
         
-        event = get_object_or_404(Event, id=event_id)
+        event = get_object_or_404(Event, pk=pk)
         return render(request, "localevents/event_signup.html", {"event":event})
     
-    def post(self, request, event_id):
+    def post(self, request, pk):
         if request.user.is_authenticated:
-            return redirect("event_detail", pk=event_id)
-        event = get_object_or_404(Event, id=event_id)
+            return redirect("event_detail", pk=pk)
+        event = get_object_or_404(Event, pk=pk)
         name = request.POST.get("name")
 
         if not name: 
             return render(request, "localevents/event_signup.html", {"event": event, "error": "Name is required."})
-        
         if event.signups.count() >= event.event_capacity:
             return render(request, "localevents/event_signup.html", {"event": event, "error": "Event is already full."})
-        
         if EventSignup.objects.filter(event=event, new_registrant=name).exists():
             return render(request, "localevents/event_signup.html", {"event": event, "error": "You have already signed up."})
         
         EventSignup.objects.create(event=event, new_registrant = name)
-        return redirect("event_detail", event_id=event_id)
+        if event.signups.count() >= event.event_capacity:
+            event.status = Event.STATUS_FULL
+            event.save()
+
+        return redirect("event_detail", pk=event.pk)

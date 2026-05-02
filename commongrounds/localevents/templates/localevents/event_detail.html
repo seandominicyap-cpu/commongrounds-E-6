@@ -1,4 +1,4 @@
-{% extends 'base.html' %} {% block heading_text %} {{ event.title }} {% endblock %} {% block content %}
+{% extends 'base.html' %} {% block heading_text %} {{ event.title }} {% endblock %} {% block body %}
 <p>
     <strong>Category:</strong>
     {{ event.category.name|default:"No Category" }}
@@ -33,23 +33,27 @@
     <a href="{% url 'event_update' event.pk %}">Edit Event</a>
 {% endif %}
 <hr>
-{if user.is_authenticated %}
+{% if user.is_authenticated %}
     {% if is_owner %}
         <p>You cannot sign up for your own event.</p>
     {% elif is_full %}
         <button disabled>Event Full</button>
     {% elif user_signed_up %}
         <p>You are already signed up.</p>
-    {else} 
+    {% else %} 
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit">Sign Up</button>
+        </form>
+    {% endif %}
 
-    {endif}
 {% else %}
     {% if is_full %}
         <button disabled>Event Full</button>
     {% else %}
         <a href="{% url 'event_signup' event.pk %}">Sign Up</a>
-    {& endif %}
-{endif} 
+    {% endif %}
+{% endif %} 
 <hr>
 <p><a href="{% url 'event_list' %}">Back to Events</a></p>
 {% endblock %}

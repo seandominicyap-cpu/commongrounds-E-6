@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from accounts.models import Profile
 
 
 class EventType(models.Model):
@@ -22,13 +23,13 @@ class Event(models.Model):
 
     title = models.CharField(max_length=255)
     category = models.ForeignKey(EventType, on_delete=models.SET_NULL, null=True, blank=True)
-    organizers = models.ManyToManyField("Profile", blank=True)
+    organizers = models.ManyToManyField(Profile, blank=True)
     event_image = models.ImageField(upload_to="event_images/", null=True, blank=True)
     description = models.TextField()
     location = models.CharField(max_length=255)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
-    event_capacity = models.PositiveIntegerField()
+    event_capacity = models.PositiveIntegerField(default=10)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_AVAILABLE)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
@@ -45,5 +46,5 @@ class Event(models.Model):
 
 class EventSignup(models.Model):
     event = models.ForeignKey("Event", on_delete=models.CASCADE, related_name="signups")
-    user_registrant = models.ForeignKey("Profile", on_delete=models.CASCADE, null=True, blank=True, related_name="user_signups")
+    user_registrant = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True, related_name="user_signups")
     new_registrant = models.CharField(max_length=255, null=True, blank=True)
