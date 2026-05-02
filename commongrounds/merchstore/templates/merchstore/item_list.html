@@ -1,11 +1,37 @@
-{% extends "base.html" %} {% block page_title %}Merchandise List{% endblock %} {% block content %}
+{% extends "base.html" %} {% block title %}Merchandise List{% endblock %} {% block body %}
+<h2>Merchandise Store</h2>
+
+{% if user_products %}
+<h3>Your Products for Sale</h3>
 <ul>
-    {% for item in items %}
+    {% for item in user_products %}
     <li>
-        <a href="{{ item.get_absolute_url }}">{{ item.name }}</a>
+        <strong><a href="{{ item.get_absolute_url }}">{{ item.name }}</a></strong>
+        - ${{ item.price }} (Stock: {{ item.stock }}) -
+        <em>{{ item.status }}</em>
+        |
+        <a href="{% url 'merchstore:item_edit' item.pk %}">Edit</a>
     </li>
     {% empty %}
-    <li>Store unavailable</li>
+    <li>No products posted yet.</li>
     {% endfor %}
 </ul>
+{% endif %}
+
+<hr />
+
+<h3>All Other Products</h3>
+<ul>
+    {% for item in all_products %}
+    <li>
+        <strong><a href="{{ item.get_absolute_url }}">{{ item.name }}</a></strong>
+        - ${{ item.price }} (Stock: {{ item.stock }}) -
+        <em>{{ item.status }}</em>
+    </li>
+    {% empty %}
+    <li>No other products available right now.</li>
+    {% endfor %}
+</ul>
+
+<p><a href="{% url 'merchstore:item_add' %}">Add a New Product</a></p>
 {% endblock %}

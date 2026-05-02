@@ -1,0 +1,22 @@
+{% extends "base.html" %} {% block title %}Sales Transactions{% endblock %} {% block body %}
+<h2>Your Sales Transactions</h2>
+
+{% if categorized_transactions %} {% for buyer, transactions in categorized_transactions.items %}
+<h3>Purchased by {{ buyer.display_name|default:buyer.user.username }}</h3>
+<ul>
+    {% for transaction in transactions %}
+    <li>
+        <strong>{{ transaction.product.name }}</strong>
+        - Quantity: {{ transaction.amount }} - Status:
+        <em>{{ transaction.status }}</em>
+        - Date: {{ transaction.created_on|date:"N j, Y, P" }}
+    </li>
+    {% endfor %}
+</ul>
+{% endfor %} {% else %}
+<p>No one has purchased your products yet.</p>
+{% endif %}
+
+<hr />
+<p><a href="{% url 'merchstore:item_list' %}">Back to Store</a></p>
+{% endblock %}

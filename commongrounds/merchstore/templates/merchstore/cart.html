@@ -1,0 +1,21 @@
+{% extends "base.html" %} {% block title %}Your Cart{% endblock %} {% block body %}
+<h2>Your Cart</h2>
+
+{% if categorized_transactions %} {% for seller, transactions in categorized_transactions.items %}
+<h3>Products from {{ seller.display_name }}</h3>
+<ul>
+    {% for transaction in transactions %}
+    <li>
+        <strong>{{ transaction.product.name }}</strong>
+        - Quantity: {{ transaction.amount }} - Price: ${{ transaction.product.price }} - Status:
+        <em>{{ transaction.status }}</em>
+    </li>
+    {% endfor %}
+</ul>
+{% endfor %} {% else %}
+<p>Your cart is empty.</p>
+{% endif %}
+
+<hr />
+<p><a href="{% url 'merchstore:item_list' %}">Back to Store</a></p>
+{% endblock %}

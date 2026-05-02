@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <title>Common Grounds</title>
+        <title>{% block title %}Common Grounds{% endblock %}</title>
     </head>
     <body>
         <header>
@@ -11,7 +11,7 @@
                 <a href="{% url 'merchstore:item_list' %}">Merchandise</a>
             </nav>
         </header>
-        <h1>{% block page_title %}{% endblock %}</h1>
-        {% block content %}{% endblock %}
+        <h1>{% block heading_text %}{% endblock %}</h1>
+        {% block body %}{% endblock %}
     </body>
 </html>
