@@ -5,12 +5,17 @@
 <h3>Your Products for Sale</h3>
 <ul>
     {% for item in user_products %}
-    <li>
-        <strong><a href="{{ item.get_absolute_url }}">{{ item.name }}</a></strong>
-        - ${{ item.price }} (Stock: {{ item.stock }}) -
-        <em>{{ item.status }}</em>
-        |
-        <a href="{% url 'merchstore:item_edit' item.pk %}">Edit</a>
+    <li style="margin-bottom: 15px; display: flex; align-items: center; gap: 15px">
+        {% if item.product_image %}
+        <img src="{{ item.product_image.url }}" alt="{{ item.name }}" style="width: 50px" />
+        {% endif %}
+        <div>
+            <strong><a href="{{ item.get_absolute_url }}">{{ item.name }}</a></strong>
+            - ${{ item.price }} (Stock: {{ item.stock }}) -
+            <em>{{ item.status }}</em>
+            |
+            <a href="{% url 'merchstore:item_edit' item.pk %}">Edit</a>
+        </div>
     </li>
     {% empty %}
     <li>No products posted yet.</li>
@@ -23,10 +28,15 @@
 <h3>All Other Products</h3>
 <ul>
     {% for item in all_products %}
-    <li>
-        <strong><a href="{{ item.get_absolute_url }}">{{ item.name }}</a></strong>
-        - ${{ item.price }} (Stock: {{ item.stock }}) -
-        <em>{{ item.status }}</em>
+    <li style="margin-bottom: 15px; display: flex; align-items: center; gap: 15px">
+        {% if item.product_image %}
+        <img src="{{ item.product_image.url }}" alt="{{ item.name }}" style="width: 50px" />
+        {% endif %}
+        <div>
+            <strong><a href="{{ item.get_absolute_url }}">{{ item.name }}</a></strong>
+            - ${{ item.price }} (Stock: {{ item.stock }}) -
+            <em>{{ item.status }}</em>
+        </div>
     </li>
     {% empty %}
     <li>No other products available right now.</li>
