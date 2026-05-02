@@ -66,14 +66,13 @@ class EventCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        profile = self.request.user.profile
-        self.object.organizers.add(profile)
+        self.object.organizers.add(self.request.user.profile)
         return response 
     
 
-class EventsUpdateView(LoginRequiredMixin, UpdateView):
+class EventUpdateView(LoginRequiredMixin, UpdateView):
     model = Event
-    field = ["title", "category", "event_image", "description", "location", "start_time", "end_time", "event_capacity", "status"]
+    fields = ["title", "category", "event_image", "description", "location", "start_time", "end_time", "event_capacity"]
     template_name = "localevents/event_update.html"
     success_url = reverse_lazy("event_list")
 
@@ -96,19 +95,22 @@ class EventSignupView(View):
             return redirect("event_detail", pk=event_id)
         
         event = get_object_or_404(Event, id=event_id)
-        return render(request, "localevents/signup.html", {"event":event})
+        return render(request, "localevents/event_signup.html", {"event":event})
     
     def post(self, request, event_id):
         if request.user.is_authenticated:
             return redirect("event_detail", pk=event_id)
-        event = get_object_or_404|(Event, id=event_id)
+        event = get_object_or_404(Event, id=event_id)
         name = request.POST.get("name")
 
         if not name: 
             return render(request, "localevents/event_signup.html", {"event": event, "error": "Name is required."})
         
         if event.signups.count() >= event.event_capacity:
-            return render(request, "localevents/event_signup.html", {"event": event, "error": "Event is already full"})
+            return render(request, "localevents/event_signup.html", {"event": event, "error": "Event is already full."})
+        
+        if EventSignup.objects.filter(event=event, new_registrant=name).exists():
+            return render(request, "localevents/event_signup.html", {"event": event, "error": "You have already signed up."})
         
         EventSignup.objects.create(event=event, new_registrant = name)
-        return redirect("event_detail", pk=event.id)
+        return redirect("event_detail", event_id=event_id)
