@@ -3,6 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views import View
 from django.shortcuts import render, get_object_or_404, redirect
+from accounts.mixins import RoleRequiredMixin
 from .models import Event, EventSignup
 
 
@@ -59,6 +60,7 @@ class EventDetailView(DetailView):
 
 
 class EventCreateView(LoginRequiredMixin, CreateView):
+    allowed_roles = []
     model = Event 
     fields = ["title", "category", "event_image", "description", "location", "start_time", "end_time", "event_capacity", "status"]
     template_name = "localevents/event_create.html"
@@ -71,6 +73,7 @@ class EventCreateView(LoginRequiredMixin, CreateView):
     
 
 class EventUpdateView(LoginRequiredMixin, UpdateView):
+    allowed_roles = []
     model = Event
     fields = ["title", "category", "event_image", "description", "location", "start_time", "end_time", "event_capacity"]
     template_name = "localevents/event_update.html"

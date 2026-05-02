@@ -27,5 +27,29 @@
     <strong>Last Updated:</strong>
     {{ event.updated_on|date:"Y-m-d" }}
 </p>
+
+<hr>
+{% if is_owner %}
+    <a href="{% url 'event_update' event.pk %}">Edit Event</a>
+{% endif %}
+<hr>
+{if user.is_authenticated %}
+    {% if is_owner %}
+        <p>You cannot sign up for your own event.</p>
+    {% elif is_full %}
+        <button disabled>Event Full</button>
+    {% elif user_signed_up %}
+        <p>You are already signed up.</p>
+    {else} 
+
+    {endif}
+{% else %}
+    {% if is_full %}
+        <button disabled>Event Full</button>
+    {% else %}
+        <a href="{% url 'event_signup' event.pk %}">Sign Up</a>
+    {& endif %}
+{endif} 
+<hr>
 <p><a href="{% url 'event_list' %}">Back to Events</a></p>
 {% endblock %}
