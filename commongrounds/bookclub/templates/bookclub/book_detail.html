@@ -1,4 +1,7 @@
-{% extends 'base.html' %} {% block heading_text %} {{ book.name }} {% endblock %} {% block content %}
+{% extends 'base.html' %} 
+{% block heading_text %} {{ book.title }} {% endblock %}
+{% block content %}
+
 <p>
     <strong>Title:</strong>
     {{ book.title }}
@@ -16,6 +19,15 @@
     {{ book.publication_year }}
 </p>
 <p>
+    <strong>Synopsis:</strong> 
+    {{ book.synopsis }}
+</p>
+<p>
+    <strong>Available to Borrow:</strong> 
+    {{ book.available_to_borrow|yesno:"Yes,No" }}
+</p>
+
+<p>
     <strong>Created On:</strong>
     {{ book.created_on }}
 </p>
@@ -24,5 +36,41 @@
     {{ book.updated_on }}
 </p>
 
+{% if request.user.is_authenticated and request.user.profile == book.contributor %}
+    <a href=""{% url 'bookclub:book_update' book.id %}"><Edit Book/a>
+{% endif %}
+
+<p><strong>Bookmarks:</strong>{{ bookmark_count }}</p> 
+{% if request.user.is_authenticated %}
+    <form method="POST" action="{% url 'bookclub:book_bookmark' book.id %}">
+        {% csrf_token %}
+        <button type="submit">{% if already_bookmarked %}Remove Bookmark{% else %}Bookmark{% endif %}</button>
+    </form>
+{% endif %}
+
+<a href="{% url 'bookclub:book_borrow' book.id %}">Borrow this Book</a>
+
+
+<h3>Write a Review</h3>
+<form method="POST">
+    {% csrf_token %}
+    {{ review_form.as_p }}
+    <button type="submit">Submit Review</button>
+</form>
+
+<h3>Reviews</h3>
+<ul>
+    {% for review in reviews %}
+        <li>
+            <strong>{{ review.title }}</strong>
+            <p>{{ review.comment }}</p>
+            <small>By: {{ review.user_reviewer.display_name|default:review.anon_reviewer }}</small>
+        </li>
+    {% empty %}
+        <li>No reviews yet.</li>
+    {% endfor %}
+</ul>
+
 <p><a href="{% url 'bookclub:book_list' %}">Back to list</a></p>
+
 {% endblock %}
