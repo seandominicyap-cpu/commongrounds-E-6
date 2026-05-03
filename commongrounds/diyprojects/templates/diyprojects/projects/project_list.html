@@ -1,25 +1,47 @@
 {% extends 'base.html' %}
+
 {% block content %}
+    <h2>DIY Projects Dashboard</h2>
+
     {% if user.is_authenticated %}
-        <h3>My Projects (Created)</h3>
+        <h3>My Created Projects</h3>
         <ul>
-            {% for p in created_projects %}
-                <li><a href="{{ p.get_absolute_url }}">{{ p.title }}</a></li>
+            {% for project in created_projects %}
+                <li><a href="{% url 'diyprojects:project_detail' project.pk %}">{{ project.title }}</a></li>
+            {% empty %}
+                <li>You haven't created any projects yet.</li>
             {% endfor %}
         </ul>
 
         <h3>My Favorites</h3>
         <ul>
-            {% for p in favorited_projects %}
-                <li><a href="{{ p.get_absolute_url }}">{{ p.title }}</a></li>
+            {% for project in favorited_projects %}
+                <li><a href="{% url 'diyprojects:project_detail' project.pk %}">{{ project.title }}</a></li>
+            {% empty %}
+                <li>No favorites yet.</li>
+            {% endfor %}
+        </ul>
+
+        <h3>Projects I've Reviewed</h3>
+        <ul>
+            {% for project in reviewed_projects %}
+                <li><a href="{% url 'diyprojects:project_detail' project.pk %}">{{ project.title }}</a></li>
+            {% empty %}
+                <li>You haven't reviewed any projects yet.</li>
             {% endfor %}
         </ul>
     {% endif %}
 
+    <hr>
     <h3>All Other Projects</h3>
     <ul>
-        {% for p in all_projects %}
-            <li><a href="{{ p.get_absolute_url }}">{{ p.title }}</a> - {{ p.category.name }}</li>
+        {% for project in all_projects %}
+            <li>
+                <a href="{% url 'diyprojects:project_detail' project.pk %}">{{ project.title }}</a> 
+                ({{ project.category.name }})
+            </li>
+        {% empty %}
+            <li>No other projects available.</li>
         {% endfor %}
     </ul>
 {% endblock %}

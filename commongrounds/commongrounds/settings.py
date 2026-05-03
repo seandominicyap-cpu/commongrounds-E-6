@@ -118,5 +118,5 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-LOGIN_REDIRECT_URL = 'project_list'
-LOGOUT_REDIRECT_URL = 'project_list'
+LOGIN_REDIRECT_URL = 'diyprojects:project_list'
+LOGOUT_REDIRECT_URL = 'diyprojects:project_list'

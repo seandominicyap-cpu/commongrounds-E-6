@@ -1,19 +1,25 @@
 {% extends 'base.html' %}
+
 {% block content %}
     <h1>{{ project.title }}</h1>
     <p><strong>Category:</strong> {{ project.category.name }}</p>
-    <p><strong>Creator:</strong> {{ project.creator.user.username }}</p>
+    <p><strong>Posted by:</strong> {{ project.creator.user.username }}</p>
     
-    <p><strong>Avg Rating:</strong> {{ avg_rating|default:"No ratings yet" }} / 10</p>
-    <p><strong>Total Favorites:</strong> {{ fav_count }}</p>
+    <div>
+        <p><strong>Average User Rating:</strong> {{ avg_rating|default:"N/A" }} / 10</p>
+        <p><strong>Times Favorited:</strong> {{ favorite_count }}</p>
+    </div>
 
-    <h3>Materials</h3>
+    <h3>Materials Needed</h3>
     <p>{{ project.materials|linebreaks }}</p>
 
-    <h3>Steps</h3>
+    <h3>Step-by-Step Instructions</h3>
     <p>{{ project.steps|linebreaks }}</p>
 
-    {% if user.profile == project.creator %}
-        <a href="{% url 'project_edit' project.pk %}">Edit this Project</a>
+    {% if user.is_authenticated and user.profile == project.creator %}
+        <hr>
+        <a href="{% url 'diyprojects:project_update' project.pk %}">
+            <button>Edit This Project</button>
+        </a>
     {% endif %}
 {% endblock %}

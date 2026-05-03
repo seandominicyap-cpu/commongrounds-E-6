@@ -5,12 +5,13 @@
 </head>
 <body>
     <nav>
-        <a href="{% url 'project_list' %}">Home</a> |
+        <a href="{% url 'diyprojects:project_list' %}">Home</a> |
+        
         {% if user.is_authenticated %}
-            <span>Hello, {{ user.username }} ({{ user.profile.role }})</span> |
+            <strong>{{ user.username }} ({{ user.profile.role }})</strong> |
             
             {% if user.profile.role == "Project Creator" %}
-                <a href="{% url 'project_add' %}">Create Project</a> |
+                <a href="{% url 'diyprojects:project_create' %}">Add New Project</a> |
             {% endif %}
             
             <form action="{% url 'logout' %}" method="post" style="display:inline;">
