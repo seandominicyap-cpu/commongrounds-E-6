@@ -9,6 +9,7 @@ from .forms import BookFormFactory, BorrowForm
 
 def book_list(request):
     books = Book.objects.all()
+    ctx = {"books": books}
 
     if request.user.is_authenticated:
         profile = request.user.profile
@@ -16,7 +17,7 @@ def book_list(request):
         bookmarked = Book.objects.filter(bookmark__profile=profile)
         reviewed = Book.objects.filter(bookreview__user_reviewer=profile)
 
-        user_books = all_books.exclude(contributor=profile).exclude(
+        user_books = books.exclude(contributor=profile).exclude(
             bookmark__profile=profile).exclude(bookreview__user_reviewer=profile)
 
         ctx["books"] = books.exclude(id__in=user_books)
@@ -28,7 +29,7 @@ def book_list(request):
 
 
 def book_detail(request, id):
-    books = Book.objects.all()
+    book = Book.objects.all()
     ReviewForm = BookFormFactory.get_form('review')
     form = ReviewForm()
 
@@ -55,9 +56,9 @@ def book_detail(request, id):
 
 
 @login_required
-def book_create(request, id):
+def book_create(request):
     ContributeForm = BookFormFactory.get_form('contribute')
-    form = ContriubteForm()
+    form = ContributeForm()
 
     if request.method == "POST":
         form = ContributeForm(request.POST)
@@ -82,8 +83,8 @@ def book_update(request, id):
             form.save()
             return redirect("bookclub:book_detail", id=book.id)
 
-        ctx = {"form": form, "book": book}
-        return render(request, "bookclub/book_form.html", ctx)
+    ctx = {"form": form, "book": book}
+    return render(request, "bookclub/book_form.html", ctx)
 
 
 def book_borrow(request, id):
@@ -109,7 +110,7 @@ def book_borrow(request, id):
 
 
 @login_required
-def book_bookmark(requrest, id):
+def book_bookmark(request, id):
     book = Book.objects.get(id=id)
     bookmark = Bookmark.objects.filter(profile=request.user.profile, book=book)
 
@@ -119,4 +120,4 @@ def book_bookmark(requrest, id):
     else:
         Bookmark.objects.create(profile=request.user.profile, book=book)
 
-    return redirect("bookblub:book_detail", id=book.id)
+    return redirect("bookclub:book_detail", id=book.id)
