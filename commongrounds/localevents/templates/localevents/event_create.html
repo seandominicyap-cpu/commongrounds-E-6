@@ -1,6 +1,5 @@
 {% extends 'base.html' %} {% block heading_text %} Create Event {% endblock%} {% block body %}
 
-<h2> Create Event </h2>
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
