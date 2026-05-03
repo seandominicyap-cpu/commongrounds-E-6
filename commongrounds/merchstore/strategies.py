@@ -18,10 +18,11 @@ class AuthenticatedPurchaseStrategy(BaseTransactionStrategy):
             added_amount = form.cleaned_data["amount"]
             existing_transaction.amount += added_amount
             existing_transaction.save()
-
             product.stock = max(0, product.stock - added_amount)
             if product.stock == 0:
                 product.status = "Out of stock"
+            elif product.status == "Out of stock" and product.stock > 0:
+                product.status = "Available"
             product.save()
         else:
             transaction = form.save(commit=False)

@@ -1,11 +1,9 @@
 from django import forms
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 from django.views import View
-from accounts.decorators import role_required
 from accounts.mixins import RoleRequiredMixin
 from merchstore.models import Product, ProductType, Transaction
 from merchstore.strategies import AuthenticatedPurchaseStrategy, GuestPurchaseStrategy
@@ -60,6 +58,10 @@ class ProductListView(ListView):
                     if existing_transaction:
                         existing_transaction.amount += pending["amount"]
                         existing_transaction.save()
+                        product.stock = max(0, product.stock - pending["amount"])
+                        if product.stock == 0:
+                            product.status = "Out of stock"
+                        product.save()
                     else:
                         Transaction.objects.create(
                             buyer=request.user.profile,
@@ -154,14 +156,15 @@ class ProductCreateView(RoleRequiredMixin, CreateView):
         return reverse_lazy("merchstore:item_list")
 
     def form_valid(self, form):
-        form.instance.owner = self.request.user.profile
+        product = form.save(commit=False)
+        product.owner = self.request.user.profile
         new_type_name = form.cleaned_data.get("new_product_type")
 
         if new_type_name:
             product_type, created = ProductType.objects.get_or_create(
                 name=new_type_name.strip()
             )
-            form.instance.product_type = product_type
+            product.product_type = product_type
         elif not form.cleaned_data.get("product_type"):
             form.add_error(
                 "product_type",
@@ -169,6 +172,12 @@ class ProductCreateView(RoleRequiredMixin, CreateView):
             )
             return self.form_invalid(form)
 
+        if product.stock == 0:
+            product.status = "Out of stock"
+        elif product.status == "Out of stock" and product.stock > 0:
+            product.status = "Available"
+
+        product.save()
         return super().form_valid(form)
 
 
@@ -265,22 +274,3 @@ class TransactionListView(LoginRequiredMixin, ListView):
 
         context["categorized_transactions"] = categorized
         return context
-
-
-@login_required
-@role_required(["Market Seller"])
-def product_create_fbv(request):
-    if request.method == "POST":
-        pass
-
-    return render(request, "merchstore/product_form.html")
-
-
-@login_required
-@role_required(["Market Seller"])
-def product_update_fbv(request, pk):
-    product = get_object_or_404(Product, pk=pk)
-    if request.method == "POST":
-        pass
-
-    return render(request, "merchstore/product_form.html", {"object": product})
