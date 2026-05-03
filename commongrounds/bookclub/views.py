@@ -3,6 +3,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Book, BookReview, Bookmark, Borrow
 from .forms import BookFormFactory, BorrowForm
+from accounts.decorators import role_required
+
 
 # Create your views here.
 
@@ -29,7 +31,7 @@ def book_list(request):
 
 
 def book_detail(request, id):
-    book = Book.objects.all()
+    book = Book.objects.get(id=id)
     ReviewForm = BookFormFactory.get_form('review')
     form = ReviewForm()
 
@@ -44,12 +46,19 @@ def book_detail(request, id):
                 review.anon_reviewer = "Anonymous"
             review.save()
             return redirect("bookclub:book_detail", id=book.id)
+
+    already_bookmarked = False
+    if request.user.is_authenticated:
+        profile = request.user.profile
+        already_bookmarked = Bookmark.objects.filter(
+            profile=profile, book=book).exists()
+
     ctx = {
         "book": book,
         "review_form": form,
         "reviews": BookReview.objects.filter(book=book),
         "bookmark_count": Bookmark.objects.filter(book=book).count(),
-        "already_bookmarked": Bookmark.objects.filter(profile=request.user.profile, book=book).exists() if request.user.is_authenticated else False,
+        "already_bookmarked": already_bookmarked,
     }
 
     return render(request, "bookclub/book_detail.html", ctx)

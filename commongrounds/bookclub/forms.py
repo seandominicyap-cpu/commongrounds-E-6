@@ -4,7 +4,8 @@ from .models import Book, BookReview, Borrow
 
 class BookReviewForm(forms.ModelForm):
     class Meta:
-        model = BookReviewfields = ['title', 'comment']
+        model = BookReview
+        fields = ['title', 'comment']
 
 
 class BookContributeForm(forms.ModelForm):
