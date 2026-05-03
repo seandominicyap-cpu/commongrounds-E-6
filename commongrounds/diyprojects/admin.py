@@ -19,7 +19,7 @@ class FavoriteAdmin(admin.ModelAdmin):
     list_display = ('profile', 'project')
 
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = ('project', 'reviewer', 'review_text')
+    list_display = ('project', 'reviewer', 'comment')
 
 class RatingAdmin(admin.ModelAdmin):
     list_display = ('project', 'score')
