@@ -1,7 +1,11 @@
 {% extends "base.html" %} {% block title %}{{ product.name }}{% endblock %} {% block body %}
 <h2>{{ product.name }}</h2>
 
-{% if product.product_image %}
+{% if request.user.is_authenticated and not is_seller %}
+<p>
+    <a href="{% url 'merchstore:cart' %}" style="font-weight: bold">View Your Cart</a>
+</p>
+{% endif %} {% if product.product_image %}
 <div class="product-image-container" style="margin-bottom: 20px">
     <img src="{{ product.product_image.url }}" alt="{{ product.name }}" style="max-width: 300px" />
 </div>
@@ -52,8 +56,5 @@
 
 <p>
     <a href="{% url 'merchstore:item_list' %}">Back to Store</a>
-    {% if request.user.is_authenticated and not is_seller %} |
-    <a href="{% url 'merchstore:cart' %}">View Your Cart</a>
-    {% endif %}
 </p>
 {% endblock %}

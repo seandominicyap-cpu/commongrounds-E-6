@@ -6,10 +6,18 @@
 <ul>
     {% for transaction in transactions %}
     <li style="margin-bottom: 15px; display: flex; align-items: center; gap: 15px">
+        {% if transaction.product.product_image %}
+        <img
+            src="{{ transaction.product.product_image.url }}"
+            alt="{{ transaction.product.name }}"
+            style="width: 50px; height: auto"
+        />
+        {% endif %}
+
         <div>
             <strong>{{ transaction.product.name }}</strong>
             - Quantity: {{ transaction.amount }} - Price: ₱{{ transaction.product.price }} - Status:
-            <em>{{ transaction.status }}</em>
+            <a>{{ transaction.status }}</a>
         </div>
 
         <form

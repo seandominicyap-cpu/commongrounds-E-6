@@ -6,7 +6,6 @@
     <a href="{% url 'merchstore:cart' %}" style="font-weight: bold">View Your Cart</a>
 </p>
 {% endif %} {% if user_products %}
-
 <h3>Your Products for Sale</h3>
 <ul>
     {% for item in user_products %}
@@ -27,11 +26,15 @@
     <li>No products posted yet.</li>
     {% endfor %}
 </ul>
+{% endif %} {% if request.user.is_authenticated and is_seller %}
+<p>
+    <a href="{% url 'merchstore:item_add' %}">Add a New Product</a>
+</p>
 {% endif %}
 
 <hr />
 
-<h3>All Products</h3>
+<h3>Other Products</h3>
 <ul>
     {% for item in all_products %}
     <li style="margin-bottom: 15px; display: flex; align-items: center; gap: 15px">
@@ -49,8 +52,4 @@
     {% endfor %}
 </ul>
 
-{% if request.user.is_authenticated and request.user.profile.is_seller %}
-<p>
-    <a href="{% url 'merchstore:item_add' %}">Add a New Product</a>
-</p>
-{% endif %} {% endblock %}
+{% endblock %}

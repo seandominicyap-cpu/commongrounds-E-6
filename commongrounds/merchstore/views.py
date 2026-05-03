@@ -117,6 +117,32 @@ class ProductDetailView(DetailView):
         context["is_seller"] = is_seller
         return context
 
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = TransactionForm(request.POST)
+
+        if self.object.stock > 0:
+            form.fields["amount"].widget.attrs.update(
+                {"min": 1, "max": self.object.stock}
+            )
+
+        if form.is_valid():
+            requested_amount = form.cleaned_data["amount"]
+            if requested_amount > self.object.stock:
+                form.add_error(
+                    "amount", f"Only {self.object.stock} items left in stock."
+                )
+                return self.render_to_response(self.get_context_data(form=form))
+
+            if request.user.is_authenticated:
+                strategy = AuthenticatedPurchaseStrategy()
+            else:
+                strategy = GuestPurchaseStrategy()
+
+            return strategy.execute(request, self.object, form)
+
+        return self.render_to_response(self.get_context_data(form=form))
+
 
 class ProductCreateView(RoleRequiredMixin, CreateView):
     model = Product
