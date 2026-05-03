@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.urls import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Profile(models.Model):
@@ -44,6 +45,9 @@ class Project(models.Model):
 
     def get_steps_list(self):
         return self.steps.splitlines()
+    
+    def get_absolute_url(self):
+        return reverse('diyprojects:project_detail', kwargs={'pk': self.pk})
 
     class Meta: 
         ordering = ['-created_on']
@@ -78,7 +82,6 @@ class ProjectRating(models.Model):
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        # Automatically creates a profile for the new user
         Profile.objects.create(user=instance)
 
 @receiver(post_save, sender=User)

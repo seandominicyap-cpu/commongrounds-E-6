@@ -5,24 +5,29 @@
 </head>
 <body>
     <nav>
+    
         <a href="{% url 'diyprojects:project_list' %}">Home</a> |
         
         {% if user.is_authenticated %}
-            <strong>{{ user.username }} ({{ user.profile.role }})</strong> |
-            
-            {% if user.profile.role == "Project Creator" %}
-                <a href="{% url 'diyprojects:project_create' %}">Add New Project</a> |
-            {% endif %}
+            <strong>{{ user.username }}</strong>
+            {% if user.profile %}
+                <span>({{ user.profile.role }})</span>
+            {% endif %} |
             
             <form action="{% url 'logout' %}" method="post" style="display:inline;">
                 {% csrf_token %}
                 <button type="submit">Logout</button>
             </form>
         {% else %}
-            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'login' %}">
+                <button type="button">Login</button>
+            </a> |
+            
+            <a href="{% url 'diyprojects:signup' %}">
+                <button type="button">Register</button>
+            </a>
         {% endif %}
     </nav>
-    <hr>
     {% block content %}{% endblock %}
 </body>
 </html>

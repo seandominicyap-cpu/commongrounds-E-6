@@ -1,25 +1,103 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>{{ project.title }}</h1>
-    <p><strong>Category:</strong> {{ project.category.name }}</p>
-    <p><strong>Posted by:</strong> {{ project.creator.user.username }}</p>
-    
-    <div>
-        <p><strong>Average User Rating:</strong> {{ avg_rating|default:"N/A" }} / 10</p>
-        <p><strong>Times Favorited:</strong> {{ favorite_count }}</p>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-start">
+        <div>
+            <h1>{{ project.title }}</h1>
+            <p class="badge bg-info text-dark">{{ project.category }}</p>
+            <p class="text-muted">By {{ project.creator.user.username }} | {{ project.created_at|date:"M d, Y" }}</p>
+        </div>
+
+        <div class="favorite-section">
+            <form action="{% url 'diyprojects:toggle_favorite' project.pk %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn {% if is_favorited %}btn-danger{% else %}btn-outline-danger{% endif %}">
+                    {% if is_favorited %}
+                        ♥ Unfavorite
+                    {% else %}
+                        ♡ Favorite
+                    {% endif %}
+                </button>
+            </form>
+            <small class="text-muted d-block text-center mt-1">{{ favorite_count }} saves</small>
+        </div>
     </div>
 
-    <h3>Materials Needed</h3>
-    <p>{{ project.materials|linebreaks }}</p>
+    <hr>
 
-    <h3>Step-by-Step Instructions</h3>
-    <p>{{ project.steps|linebreaks }}</p>
+    <div class="row">
+        <div class="col-md-8">
+            <h3>Description</h3>
+            <p>{{ project.description|linebreaks }}</p>
 
-    {% if user.is_authenticated and user.profile == project.creator %}
-        <hr>
-        <a href="{% url 'diyprojects:project_update' project.pk %}">
-            <button>Edit This Project</button>
-        </a>
-    {% endif %}
+            <h3 class="mt-4">Materials Needed</h3>
+            <p>{{ project.materials|linebreaks }}</p>
+
+            <h3 class="mt-4">Step-by-Step Instructions</h3>
+            <div class="p-3 bg-light rounded border">
+                {{ project.steps|linebreaks }}
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body text-center">
+                    <h4>Average Rating</h4>
+                    <h2 class="text-warning">
+                        {% if avg_rating %}
+                            {{ avg_rating|floatformat:1 }} <small class="text-muted" style="font-size: 1rem;">/ 10</small>
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </h2>
+                </div>
+            </div>
+
+            <!-- NEW RATING FORM SECTION -->
+            <div class="card shadow-sm mb-4 border-warning">
+                <div class="card-body">
+                    <h6>Rate this Project</h6>
+                    <form action="{% url 'diyprojects:rate_project' project.pk %}" method="post" class="d-flex gap-2">
+                        {% csrf_token %}
+                        <select name="score" class="form-select form-select-sm" required>
+                            <option value="" disabled selected>1-10</option>
+                            {% for i in "123456789"|make_list %}
+                                <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                            {% endfor %}
+                            <option value="10">10</option>
+                        </select>
+                        <button type="submit" class="btn btn-warning btn-sm">Rate</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5>Reviews</h5>
+                    <div class="review-list" style="max-height: 400px; overflow-y: auto;">
+                        {% for review in project.reviews.all %}
+                            <div class="mb-3 p-2 border-bottom">
+                                <p class="mb-0"><strong>{{ review.reviewer.user.username }}</strong></p>
+                                <p class="mb-0 small text-muted">{{ review.created_at|date:"M d, Y" }}</p>
+                                <p class="mt-1">{{ review.comment }}</p>
+                            </div>
+                        {% empty %}
+                            <p class="text-muted italic">No reviews yet.</p>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mt-4 p-3 bg-white border rounded">
+                        <h6>Leave a Review</h6>
+                        <form action="{% url 'diyprojects:add_review' project.pk %}" method="post">
+                            {% csrf_token %}
+                            {{ review_form.as_p }}
+                            <button type="submit" class="btn btn-primary btn-sm w-100">Submit Review</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
