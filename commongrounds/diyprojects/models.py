@@ -25,7 +25,7 @@ class Project(models.Model):
     title = models.CharField(max_length=255)
     category = models.ForeignKey(ProjectCategory, on_delete=models.SET_NULL, related_name='category', null=True, blank=True)
     
-    creator = models.ForeignKey('accounts.Profile', on_delete=models.SET_NULL, null=True)
+    creator = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True)
 
     description = models.TextField(blank=True)
     materials = models.TextField(blank=True)
@@ -49,7 +49,7 @@ class Project(models.Model):
 class Favorite(models.Model):
     STATUS_CHOICES = [('Backlog', 'Backlog'), ('To-do', 'To-do'), ('Done', 'Done')]
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    profile = models.ForeignKey('accounts.Profile', on_delete=models.CASCADE)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     date_favorited = models.DateField(auto_now_add=True)
     project_status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Backlog')
 
@@ -58,7 +58,7 @@ class Favorite(models.Model):
     
 class ProjectReview(models.Model):
     project = models.ForeignKey(Project, related_name='reviews', on_delete=models.CASCADE)
-    reviewer = models.ForeignKey('accounts.Profile', on_delete=models.CASCADE)
+    reviewer = models.ForeignKey(Profile, on_delete=models.CASCADE)
     comment = models.TextField()
     image = models.ImageField(upload_to='project_reviews/', blank=True, null=True)
 
@@ -67,7 +67,7 @@ class ProjectReview(models.Model):
 
 class ProjectRating(models.Model):
     project = models.ForeignKey(Project, related_name='ratings', on_delete=models.CASCADE)
-    profile = models.ForeignKey('accounts.Profile', on_delete=models.CASCADE)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     score = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(10)])
     
     def __str__(self):

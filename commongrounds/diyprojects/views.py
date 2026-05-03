@@ -56,10 +56,10 @@ class ProjectCreateView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         return self.object.get_absolute_url()
     
-class ProjectUpdateView():
+class ProjectUpdateView(LoginRequiredMixin, UpdateView):
     model = Project
     fields = ['title', 'category', 'description', 'materials', 'steps']
-    template_name = 'diyprojects/project/project_form.html'
+    template_name = 'diyprojects/projects/project_form.html'
 
     def dispatch(self, request, *args, **kwargs):
         project = self.get_object()
