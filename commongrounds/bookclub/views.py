@@ -56,7 +56,7 @@ def book_detail(request, id):
 
 
 @login_required
-@role_required("Book Contributor")
+@role_required(["Book Contributor"])
 def book_create(request):
     ContributeForm = BookFormFactory.get_form('contribute')
     form = ContributeForm()
@@ -73,7 +73,7 @@ def book_create(request):
 
 
 @login_required
-@role_required("Book Contributor")
+@role_required(["Book Contributor"])
 def book_update(request, id):
     book = Book.objects.get(id=id)
     UpdateForm = BookFormFactory.get_form('update')
