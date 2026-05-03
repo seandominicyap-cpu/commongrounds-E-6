@@ -1,5 +1,6 @@
 from django.shortcuts import redirect
 from django.urls import reverse
+from merchstore.models import Transaction
 
 
 class BaseTransactionStrategy:
@@ -9,11 +10,20 @@ class BaseTransactionStrategy:
 
 class AuthenticatedPurchaseStrategy(BaseTransactionStrategy):
     def execute(self, request, product, form):
-        transaction = form.save(commit=False)
-        transaction.product = product
-        transaction.buyer = request.user.profile
-        transaction.status = "On cart"
-        transaction.save()
+        existing_transaction = Transaction.objects.filter(
+            buyer=request.user.profile, product=product, status="On cart"
+        ).first()
+
+        if existing_transaction:
+            existing_transaction.amount += form.cleaned_data["amount"]
+            existing_transaction.save()
+        else:
+            transaction = form.save(commit=False)
+            transaction.product = product
+            transaction.buyer = request.user.profile
+            transaction.status = "On cart"
+            transaction.save()
+
         return redirect("merchstore:cart")
 
 

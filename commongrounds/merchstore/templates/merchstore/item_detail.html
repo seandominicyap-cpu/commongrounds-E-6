@@ -21,7 +21,7 @@
 </p>
 <p>
     <strong>Price:</strong>
-    ${{ product.price }}
+    ₱{{ product.price }}
 </p>
 <p>
     <strong>Stock Available:</strong>
@@ -29,7 +29,7 @@
 </p>
 <p>
     <strong>Status:</strong>
-    <em>{{ product.status }}</em>
+    <a>{{ product.status }}</a>
 </p>
 
 <hr />
@@ -40,15 +40,20 @@
     <a href="{% url 'merchstore:item_edit' product.pk %}">Edit this item</a>
 </p>
 {% else %}
-<h3>Purchase This Item</h3>
+<h3>Add to Cart</h3>
 <form method="post">
     {% csrf_token %} {{ form.as_p }} {% if product.stock == 0 %}
     <button type="submit" disabled>Out of Stock</button>
     {% else %}
-    <button type="submit">Buy Now</button>
+    <button type="submit">Add</button>
     {% endif %}
 </form>
 {% endif %}
 
-<p><a href="{% url 'merchstore:item_list' %}">Back to Store</a></p>
+<p>
+    <a href="{% url 'merchstore:item_list' %}">Back to Store</a>
+    {% if request.user.is_authenticated and not is_seller %} |
+    <a href="{% url 'merchstore:cart' %}">View Your Cart</a>
+    {% endif %}
+</p>
 {% endblock %}

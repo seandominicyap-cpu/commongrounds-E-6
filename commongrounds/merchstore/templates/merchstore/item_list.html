@@ -1,7 +1,12 @@
 {% extends "base.html" %} {% block title %}Merchandise List{% endblock %} {% block body %}
 <h2>Merchandise Store</h2>
 
-{% if user_products %}
+{% if request.user.is_authenticated and not is_seller %}
+<p>
+    <a href="{% url 'merchstore:cart' %}" style="font-weight: bold">View Your Cart</a>
+</p>
+{% endif %} {% if user_products %}
+
 <h3>Your Products for Sale</h3>
 <ul>
     {% for item in user_products %}
@@ -11,10 +16,11 @@
         {% endif %}
         <div>
             <strong><a href="{{ item.get_absolute_url }}">{{ item.name }}</a></strong>
-            - ${{ item.price }} (Stock: {{ item.stock }}) -
-            <em>{{ item.status }}</em>
-            |
+            - ₱{{ item.price }} (Stock: {{ item.stock }}) -
+            <a>{{ item.status }}</a>
+            {% if request.user.is_authenticated %} {% if request.user.profile == item.owner %} |
             <a href="{% url 'merchstore:item_edit' item.pk %}">Edit</a>
+            {% endif %} {% endif %}
         </div>
     </li>
     {% empty %}
@@ -25,7 +31,7 @@
 
 <hr />
 
-<h3>All Other Products</h3>
+<h3>All Products</h3>
 <ul>
     {% for item in all_products %}
     <li style="margin-bottom: 15px; display: flex; align-items: center; gap: 15px">
@@ -34,8 +40,8 @@
         {% endif %}
         <div>
             <strong><a href="{{ item.get_absolute_url }}">{{ item.name }}</a></strong>
-            - ${{ item.price }} (Stock: {{ item.stock }}) -
-            <em>{{ item.status }}</em>
+            - ₱{{ item.price }} (Stock: {{ item.stock }}) -
+            <a>{{ item.status }}</a>
         </div>
     </li>
     {% empty %}
@@ -43,5 +49,8 @@
     {% endfor %}
 </ul>
 
-<p><a href="{% url 'merchstore:item_add' %}">Add a New Product</a></p>
-{% endblock %}
+{% if request.user.is_authenticated and request.user.profile.is_seller %}
+<p>
+    <a href="{% url 'merchstore:item_add' %}">Add a New Product</a>
+</p>
+{% endif %} {% endblock %}
