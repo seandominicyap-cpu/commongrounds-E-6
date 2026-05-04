@@ -7,6 +7,7 @@ from .models import Project, ProjectCategory, Favorite, ProjectReview, ProjectRa
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
 from .forms import ReviewForm
+from accounts.mixins import RoleRequiredMixin
 
 
 class ProjectListView(ListView):
@@ -53,15 +54,15 @@ class ProjectDetailView(LoginRequiredMixin, DetailView):
 
         return context
 
-class ProjectCreateView(LoginRequiredMixin, CreateView):
+class ProjectCreateView(LoginRequiredMixin, RoleRequiredMixin, CreateView):
     model = Project
     fields = ['title', 'category', 'description', 'materials', 'steps']
     template_name = 'diyprojects/projects/project_form.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        if not request.user.profile.role == "Project Creator":
-            raise PermissionDenied
-        return super().dispatch(request, *args, **kwargs)
+    allowed_roles = ["Project Creator"]
+    # def dispatch(self, request, *args, **kwargs):
+    #     if not request.user.profile.role == "Project Creator":
+    #         raise PermissionDenied
+    #     return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         form.instance.creator = self.request.user.profile
@@ -70,16 +71,16 @@ class ProjectCreateView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         return self.object.get_absolute_url()
     
-class ProjectUpdateView(LoginRequiredMixin, UpdateView):
+class ProjectUpdateView(LoginRequiredMixin, RoleRequiredMixin, UpdateView):
     model = Project
     fields = ['title', 'category', 'description', 'materials', 'steps']
     template_name = 'diyprojects/projects/project_form.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        project = self.get_object()
-        if request.user.profile.role != "Project Creator" or project.creator != request.user.profile:
-            raise PermissionDenied
-        return super().dispatch(request, *args, **kwargs)
+    allowed_roles = ["Project Creator"]
+    # def dispatch(self, request, *args, **kwargs):
+    #     project = self.get_object()
+    #     if request.user.profile.role != "Project Creator" or project.creator != request.user.profile:
+    #         raise PermissionDenied
+    #     return super().dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
         return self.object.get_absolute_url()
