@@ -6,5 +6,5 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = ("user", "display_name")
 
 
-admin.site.register(Profile, ProfileAdmin)
-admin.site.register(Role)
+# admin.site.register(Profile, ProfileAdmin)
+# admin.site.register(Role)

@@ -4,14 +4,14 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
+from accounts.models import Profile
+# class Profile(models.Model):
+#     user = models.OneToOneField(User, on_delete=models.CASCADE)
+#     ROLE_CHOICES = [('Project Creator', 'Project Creator'), ('Regular User', 'Regular User')]
+#     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='Regular User')
 
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    ROLE_CHOICES = [('Project Creator', 'Project Creator'), ('Regular User', 'Regular User')]
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='Regular User')
-
-    def __str__(self):
-        return self.user.username
+#     def __str__(self):
+#         return self.user.username
 
 
 class ProjectCategory(models.Model):
@@ -52,6 +52,7 @@ class Project(models.Model):
 
     class Meta: 
         ordering = ['-created_on']
+
 
 class Favorite(models.Model):
     STATUS_CHOICES = [('Backlog', 'Backlog'), ('To-do', 'To-do'), ('Done', 'Done')]

@@ -17,10 +17,6 @@ class Profile(models.Model):
     email_address = models.EmailField()
 
     def __str__(self):
-<<<<<<< HEAD
-        return self.display_name
-=======
         if self.display_name:
             return self.display_name
         return self.user.username
->>>>>>> merchstore_final
