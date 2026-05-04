@@ -14,9 +14,7 @@ class CommissionService:
 
     @staticmethod
     def create_commission(author, data, jobs_data):
-        """
-        Creates a Commission and its Jobs atomically.
-        """
+        """Creates a Commission and its Jobs atomically."""
         with transaction.atomic():
             commission = Commission.objects.create(
                 maker=author,
@@ -33,12 +31,7 @@ class CommissionService:
 
     @staticmethod
     def apply_to_job(applicant, job):
-        """
-        Apply to a job with validation:
-        - cannot apply twice
-        - cannot apply if job is full
-        """
-        # ❌ Already applied
+        """Apply to a job with validation:"""
         if JobApplication.objects.filter(
             job=job,
             applicant=applicant
@@ -52,7 +45,6 @@ class CommissionService:
             status=accepted_status
         ).count()
 
-        # ❌ Job is full
         if accepted_count >= job.manpower_required:
             raise ValueError("Job is already full")
 
@@ -66,10 +58,7 @@ class CommissionService:
 
     @staticmethod
     def sync_commission_status(commission):
-        """
-        If ALL jobs are FULL → Commission becomes FULL
-        Otherwise → OPEN
-        """
+        """Apply commission status change logic"""
         full_status = JobStatus.objects.get(name="FULL")
         open_status = JobStatus.objects.get(name="OPEN")
 
@@ -84,11 +73,7 @@ class CommissionService:
 
     @staticmethod
     def get_commission_summary(commission):
-        """
-        Returns:
-        - total_manpower
-        - open_manpower
-        """
+        """Summarize commission status (open/free manpower)"""
         total_manpower = (
             commission.jobs.aggregate(
                 total=Sum("manpower_required")

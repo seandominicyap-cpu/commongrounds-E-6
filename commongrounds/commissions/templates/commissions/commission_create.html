@@ -2,21 +2,21 @@
 {% block script %}
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-
-    document.getElementById("add-job").addEventListener("click", function () {
-        const container = document.getElementById("job-forms");
-        const totalForms = document.getElementById("id_jobs-TOTAL_FORMS");
-
+    const addBtn = document.getElementById("add-job");
+    const container = document.getElementById("job-forms");
+    const totalForms = document.querySelector("input[name$='TOTAL_FORMS']");
+    const emptyFormTemplate = document.getElementById("empty-form").innerHTML;
+    console.log(document.querySelectorAll("input"));
+    addBtn.addEventListener("click", function () {
         let index = parseInt(totalForms.value);
-        let newForm = container.children[0].cloneNode(true);
-        newForm.innerHTML = newForm.innerHTML.replace(/jobs-(\d+)-/g, `jobs-${index}-`);
-        newForm.querySelectorAll("input, select, textarea").forEach(el => {
-            if (el.type !== "hidden") {
-                el.value = "";
-            }
-        });
 
-        container.appendChild(newForm);
+        let newFormHtml = emptyFormTemplate.replace(/__prefix__/g, index);
+
+        let div = document.createElement("div");
+        div.classList.add("job-form");
+        div.innerHTML = newFormHtml;
+
+        container.appendChild(div);
 
         totalForms.value = index + 1;
     });
@@ -33,7 +33,6 @@ document.addEventListener("DOMContentLoaded", function () {
     {{ form.as_p }}
 
     <h3>Jobs</h3>
-
     {{ job_formset.management_form }}
     <div id="job-forms">
         {% for form in job_formset %}
@@ -41,6 +40,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 {{ form.as_p }}
             </div>
         {% endfor %}
+    </div>
+
+    <div id="empty-form" style="display: none;">
+        {{ job_formset.empty_form.as_p }}
     </div>
 
     <button type="button" id="add-job">+ Add Job</button>

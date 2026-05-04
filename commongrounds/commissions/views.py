@@ -9,7 +9,7 @@ from accounts.mixins import RoleRequiredMixin
 from .forms import JobFormSet, CommissionForm
 from django.http import HttpResponseForbidden
 
-from .services import update_commission_status
+from .services import update_commission_status, CommissionService
 # Create your views here.
 
 
@@ -65,19 +65,7 @@ class CommissionDetailView(TemplateView):
                 filter=Q(job_applications__status__name="ACCEPTED")
             )
         )
-        total_manpower = (
-            Job.objects.filter(commission=commission)
-            .aggregate(total=Sum("manpower_required"))
-        )["total"] or 0
-        
-        accepted_status = ApplicationStatus.objects.get(name="ACCEPTED")
-
-        signed_manpower = JobApplication.objects.filter(
-            job__commission = commission,
-            status=accepted_status
-        ).count()
-
-        open_manpower = total_manpower - signed_manpower
+        summary = CommissionService.get_commission_summary(commission)
 
         ctx["title"] = commission.title
         ctx["description"] = commission.description
@@ -85,8 +73,8 @@ class CommissionDetailView(TemplateView):
         ctx["people_required"] = commission.people_required
         ctx["jobs"] = jobs
         ctx["status"] = commission.status
-        ctx["total_manpower"] = total_manpower
-        ctx["open_manpower"] = open_manpower
+        ctx["total_manpower"] = summary["total_manpower"]
+        ctx["open_manpower"] = summary["open_manpower"]
         ctx["maker"] = maker
         ctx["pk"] = commission_id
         ctx["status"] = status
@@ -104,24 +92,36 @@ class CommissionCreateView(LoginRequiredMixin, RoleRequiredMixin, CreateView):
         ctx = super().get_context_data(**kwargs)
 
         if self.request.POST:
-            ctx["job_formset"] = JobFormSet(self.request.POST)
+            ctx["job_formset"] = JobFormSet(self.request.POST, prefix="jobs")
         else:
-            ctx["job_formset"] = JobFormSet()
+            ctx["job_formset"] = JobFormSet(prefix="jobs")
 
         return ctx
 
     def form_valid(self, form):
-        form.instance.maker = self.request.user.profile
-        response = super().form_valid(form)
-
-        job_formset = JobFormSet(self.request.POST, instance=self.object)
+        context = self.get_context_data()
+        job_formset = context["job_formset"]
 
         if job_formset.is_valid():
-            job_formset.save()
-        else:
-            print(job_formset.errors)
+            jobs_data = []
 
-        return response
+            for job_form in job_formset:
+                if job_form.cleaned_data and not job_form.cleaned_data.get("DELETE", False):
+                    jobs_data.append({
+                        "role": job_form.cleaned_data["role"],
+                        "manpower_required": job_form.cleaned_data["manpower_required"],
+                        "status": job_form.cleaned_data["status"],
+                    })
+            form.cleaned_data.pop("maker", None)
+            self.object = CommissionService.create_commission(
+                author=self.request.user.profile,
+                data=form.cleaned_data,
+                jobs_data=jobs_data
+            )
+
+            return redirect(self.success_url)
+
+        return self.render_to_response(self.get_context_data(form=form))
 
     
 class CommissionUpdateView(LoginRequiredMixin, RoleRequiredMixin, UpdateView):
@@ -149,11 +149,11 @@ class CommissionUpdateView(LoginRequiredMixin, RoleRequiredMixin, UpdateView):
             job_formset.instance = self.object
             job_formset.save()
 
-            update_commission_status(self.object)
-            
-            return super().form_valid(form)
-        else:
-            return self.render_to_response(self.get_context_data(form=form))
+            CommissionService.sync_commission_status(self.object)
+
+            return redirect(self.success_url)
+
+        return self.render_to_response(self.get_context_data(form=form))
 
 
 class ApplyToJobView(LoginRequiredMixin, View):
@@ -161,28 +161,12 @@ class ApplyToJobView(LoginRequiredMixin, View):
     def post(self, request, pk):
         job = get_object_or_404(Job, pk=pk)
 
-        already_applied = JobApplication.objects.filter(
-            job=job,
-            applicant=request.user.profile
-        ).exists()
-
-        if already_applied:
-            return HttpResponseForbidden("You already applied for this job")
-
-        accepted_status = ApplicationStatus.objects.get(name="ACCEPTED")
-
-        accepted_count = JobApplication.objects.filter(
-            job=job,
-            status=accepted_status
-        ).count()
-
-        if accepted_count >= job.manpower_required:
-            return HttpResponseForbidden("Job is full")
-
-        JobApplication.objects.create(
-            job=job,
-            applicant=request.user.profile,
-            status=ApplicationStatus.objects.get(name="PENDING")
-        )
+        try:
+            CommissionService.apply_to_job(
+                applicant=request.user.profile,
+                job=job
+            )
+        except ValueError:
+            return HttpResponseForbidden("Cannot apply")
 
         return redirect("commissions:commission_detail", pk=job.commission.pk)

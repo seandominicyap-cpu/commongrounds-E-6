@@ -9,6 +9,8 @@ class JobStatus(models.Model):
 
     class Meta:
         ordering = ['order']
+        verbose_name = "Job Status"
+        verbose_name_plural = "Job Statuses"
 
     def __str__(self):
         return self.name
@@ -20,6 +22,8 @@ class ApplicationStatus(models.Model):
 
     class Meta:
         ordering = ['order']
+        verbose_name = "Application Status"
+        verbose_name_plural = "Application Statuses"
 
     def __str__(self):
         return self.name
@@ -46,6 +50,8 @@ class CommissionType(models.Model):
         """Class that provides ordering of commission types."""
 
         ordering = ["name"]
+        verbose_name = "Commission Type"
+        verbose_name_plural = "Commission Types"
 
 
 class Commission(models.Model):
@@ -76,7 +82,7 @@ class Commission(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
     def __str__(self):
-        return self.name
+        return self.title
     
     def refresh_status(self):
         full = JobStatus.objects.get(name="FULL")
@@ -93,6 +99,8 @@ class Commission(models.Model):
         """Class that provides ordering of commissions."""
 
         ordering = ["created_on"]
+        verbose_name = "Commission"
+        verbose_name_plural = "Commissions"
 
         
 class Job(models.Model):
@@ -113,6 +121,8 @@ class Job(models.Model):
 
     class Meta:
         ordering = ["-status", "-manpower_required", "role"]
+        verbose_name = "Job"
+        verbose_name_plural = "Jobs"
 
 
 class JobApplication(models.Model):
@@ -137,4 +147,6 @@ class JobApplication(models.Model):
 
     class Meta:
         ordering = ['status', '-applied_on']
+        verbose_name = "Job Application"
+        verbose_name_plural = "Job Applications"
 
