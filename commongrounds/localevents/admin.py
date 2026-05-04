@@ -37,6 +37,3 @@ class EventAdmin(admin.ModelAdmin):
 admin.site.register(EventType, EventTypeAdmin)
 admin.site.register(Event, EventAdmin)
 admin.site.register(EventSignup)
-
-admin.site.register(Profile)
-admin.site.register(Role)

@@ -3,7 +3,7 @@
 {% block body %}
 
 <form method = "POST">
-    {% crsf_token %}
+    {% csrf_token %}
     {{ form.as_p }}
         <button type="submit">Save</button>
 </form>

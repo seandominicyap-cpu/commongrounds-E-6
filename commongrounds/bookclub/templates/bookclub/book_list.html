@@ -2,9 +2,9 @@
 {% block heading_text %} Book List {% endblock%} 
 
 
-{% block content %}
+{% block body %}
 
-<a href = "{%url 'bookbluc: book_create'%}">+ Add a Book</a>
+<a href = "{%url 'bookclub:book_create'%}">+ Add a Book</a>
 
 {%if request.user.is_authenticated %}
     {% if contributed_books %}

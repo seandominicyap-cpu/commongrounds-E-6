@@ -25,7 +25,6 @@ class RatingAdmin(admin.ModelAdmin):
     list_display = ('project', 'score')
     list_filter = ('score',)
 
-# admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(ProjectCategory, CategoryAdmin)
 admin.site.register(Favorite, FavoriteAdmin)

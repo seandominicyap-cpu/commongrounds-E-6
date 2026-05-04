@@ -1,6 +1,6 @@
 {% extends 'base.html' %} 
 {% block heading_text %} {{ book.title }} {% endblock %}
-{% block content %}
+{% block body %}
 
 <p>
     <strong>Title:</strong>
@@ -37,7 +37,7 @@
 </p>
 
 {% if request.user.is_authenticated and request.user.profile == book.contributor %}
-    <a href=""{% url 'bookclub:book_update' book.id %}"><Edit Book/a>
+    <a href="{% url 'bookclub:book_update' book.id %}">Edit Book</a>
 {% endif %}
 
 <p><strong>Bookmarks:</strong>{{ bookmark_count }}</p> 

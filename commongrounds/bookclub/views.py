@@ -22,7 +22,7 @@ def book_list(request):
         user_books = books.exclude(contributor=profile).exclude(
             bookmark__profile=profile).exclude(bookreview__user_reviewer=profile)
 
-        ctx["books"] = books.exclude(id__in=user_books)
+        ctx["all_books"] = user_books
         ctx["contributed_books"] = contributed
         ctx["bookmarked_books"] = bookmarked
         ctx["reviewed_books"] = reviewed
