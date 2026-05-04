@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block heading_text %} {% if book %}Edit Book {% else %} Add a Book {% endif %}{% endblock %}
+{% block body %}
+
+<form method = "POST">
+    {% crsf_token %}
+    {{ form.as_p }}
+        <button type="submit">Save</button>
+</form>
+
+<p><a href="{% url 'bookclub:book_list' %}">Back to list</a></p>
+
+{% endblock %}
+

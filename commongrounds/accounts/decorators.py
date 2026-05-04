@@ -2,6 +2,7 @@ from functools import wraps
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 
+
 def role_required(allowed_roles):
     def decorator(view_func):
 
