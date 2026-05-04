@@ -1,0 +1,10 @@
+{% extends 'base.html' %} {% block heading_text %} Update Event {% endblock%} {% block body %}
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save Changes</button>
+</form>
+
+<p><a href="{% url 'event_detail' event.pk %}">Back to Event</a></p>
+{% endblock %}

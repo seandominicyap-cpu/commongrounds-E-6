@@ -125,8 +125,9 @@ USE_TZ = True
 <<<<<<< HEAD
 STATIC_URL = "static/"
 
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = 'event_list'
 
+<<<<<<< HEAD
 LOGOUT_REDIRECT_URL = '/'
 =======
 STATIC_URL = 'static/'
@@ -134,3 +135,6 @@ STATIC_URL = 'static/'
 LOGIN_REDIRECT_URL = 'diyprojects:project_list'
 LOGOUT_REDIRECT_URL = 'diyprojects:project_list'
 >>>>>>> origin/diyprojects
+=======
+LOGOUT_REDIRECT_URL = "/localevents/events/"
+>>>>>>> origin/localevents-new
