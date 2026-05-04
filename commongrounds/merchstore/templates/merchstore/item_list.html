@@ -1,11 +1,55 @@
-{% extends "base.html" %} {% block page_title %}Merchandise List{% endblock %} {% block content %}
+{% extends "base.html" %} {% block title %}Merchandise List{% endblock %} {% block body %}
+<h2>Merchandise Store</h2>
+
+{% if request.user.is_authenticated and not is_seller %}
+<p>
+    <a href="{% url 'merchstore:cart' %}" style="font-weight: bold">View Your Cart</a>
+</p>
+{% endif %} {% if user_products %}
+<h3>Your Products for Sale</h3>
 <ul>
-    {% for item in items %}
-    <li>
-        <a href="{{ item.get_absolute_url }}">{{ item.name }}</a>
+    {% for item in user_products %}
+    <li style="margin-bottom: 15px; display: flex; align-items: center; gap: 15px">
+        {% if item.product_image %}
+        <img src="{{ item.product_image.url }}" alt="{{ item.name }}" style="width: 50px" />
+        {% endif %}
+        <div>
+            <strong><a href="{{ item.get_absolute_url }}">{{ item.name }}</a></strong>
+            - ₱{{ item.price }} (Stock: {{ item.stock }}) -
+            <a>{{ item.status }}</a>
+            {% if request.user.is_authenticated %} {% if request.user.profile == item.owner %} |
+            <a href="{% url 'merchstore:item_edit' item.pk %}">Edit</a>
+            {% endif %} {% endif %}
+        </div>
     </li>
     {% empty %}
-    <li>Store unavailable</li>
+    <li>No products posted yet.</li>
     {% endfor %}
 </ul>
+{% endif %} {% if request.user.is_authenticated and is_seller %}
+<p>
+    <a href="{% url 'merchstore:item_add' %}">Add a New Product</a>
+</p>
+{% endif %}
+
+<hr />
+
+<h3>Other Products</h3>
+<ul>
+    {% for item in all_products %}
+    <li style="margin-bottom: 15px; display: flex; align-items: center; gap: 15px">
+        {% if item.product_image %}
+        <img src="{{ item.product_image.url }}" alt="{{ item.name }}" style="width: 50px" />
+        {% endif %}
+        <div>
+            <strong><a href="{{ item.get_absolute_url }}">{{ item.name }}</a></strong>
+            - ₱{{ item.price }} (Stock: {{ item.stock }}) -
+            <a>{{ item.status }}</a>
+        </div>
+    </li>
+    {% empty %}
+    <li>No other products available right now.</li>
+    {% endfor %}
+</ul>
+
 {% endblock %}

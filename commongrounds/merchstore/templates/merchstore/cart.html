@@ -1,0 +1,40 @@
+{% extends "base.html" %} {% block title %}Your Cart{% endblock %} {% block body %}
+<h2>Your Cart</h2>
+
+{% if categorized_transactions %} {% for seller, transactions in categorized_transactions.items %}
+<h3>Products from {{ seller.display_name }}</h3>
+<ul>
+    {% for transaction in transactions %}
+    <li style="margin-bottom: 15px; display: flex; align-items: center; gap: 15px">
+        {% if transaction.product.product_image %}
+        <img
+            src="{{ transaction.product.product_image.url }}"
+            alt="{{ transaction.product.name }}"
+            style="width: 50px; height: auto"
+        />
+        {% endif %}
+
+        <div>
+            <strong>{{ transaction.product.name }}</strong>
+            - Quantity: {{ transaction.amount }} - Price: ₱{{ transaction.product.price }} - Status:
+            <a>{{ transaction.status }}</a>
+        </div>
+
+        <form
+            method="post"
+            action="{% url 'merchstore:cart_remove' transaction.pk %}"
+            style="display: inline; margin-left: 10px"
+        >
+            {% csrf_token %}
+            <button type="submit">Remove</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
+{% endfor %} {% else %}
+<p>Your cart is empty.</p>
+{% endif %}
+
+<hr />
+<p><a href="{% url 'merchstore:item_list' %}">Back to Store</a></p>
+{% endblock %}
