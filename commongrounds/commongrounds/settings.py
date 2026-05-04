@@ -122,19 +122,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-<<<<<<< HEAD
 STATIC_URL = "static/"
 
-LOGIN_REDIRECT_URL = 'event_list'
+LOGIN_REDIRECT_URL = '/'
 
-<<<<<<< HEAD
 LOGOUT_REDIRECT_URL = '/'
-=======
-STATIC_URL = 'static/'
-
-LOGIN_REDIRECT_URL = 'diyprojects:project_list'
-LOGOUT_REDIRECT_URL = 'diyprojects:project_list'
->>>>>>> origin/diyprojects
-=======
-LOGOUT_REDIRECT_URL = "/localevents/events/"
->>>>>>> origin/localevents-new
