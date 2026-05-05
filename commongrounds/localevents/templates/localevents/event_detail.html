@@ -30,7 +30,7 @@
 
 <hr>
 {% if is_owner %}
-    <a href="{% url 'event_update' event.pk %}">Edit Event</a>
+    <a href="{% url 'localevents:event_update' event.pk %}">Edit Event</a>
 {% endif %}
 <hr>
 {% if user.is_authenticated %}
@@ -51,9 +51,9 @@
     {% if is_full %}
         <button disabled>Event Full</button>
     {% else %}
-        <a href="{% url 'event_signup' event.pk %}">Sign Up</a>
+        <a href="{% url 'localevents:event_signup' event.pk %}">Sign Up</a>
     {% endif %}
 {% endif %} 
 <hr>
-<p><a href="{% url 'event_list' %}">Back to Events</a></p>
+<p><a href="{% url 'localevents:event_list' %}">Back to Events</a></p>
 {% endblock %}

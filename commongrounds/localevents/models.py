@@ -41,7 +41,7 @@ class Event(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse("event_detail", args=[str(self.id)])
+        return reverse("localevents:event_detail", args=[str(self.id)])
 
 
 class EventSignup(models.Model):

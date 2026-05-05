@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block body %}
+<h1> Super cool homepage </h1>
+<p> Which app would you like to visit</p>
+<ul>
+    <li><a href="{% url 'bookclub:book_list' %}">Book Club</a></li>
+    <li><a href="{% url 'commissions:commission_list' %}">Commissions</a></li>
+    <li><a href="{% url 'diyprojects:project_list' %}">DIY Projects</a></li>
+    <li><a href="{% url 'localevents:event_list' %}">Local Events</a></li>
+    <li><a href="{% url 'merchstore:item_list'%}">Merchstore</a></li>
+</ul>
+{% endblock %}

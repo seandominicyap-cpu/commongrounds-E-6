@@ -18,13 +18,15 @@ Including another URLconf
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, include
+from .views import HomePageView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include('accounts.urls')),
-    path("bookclub/", include("bookclub.urls", namespace="bookclub")),
+    path("bookclub/", include("bookclub.urls")),
     path("localevents/", include("localevents.urls")),
     path("diyprojects/", include("diyprojects.urls")),
     path("commissions/", include("commissions.urls")),
     path("merchstore/", include("merchstore.urls")),
+    path("", HomePageView.as_view(), name="home"),
 ]
