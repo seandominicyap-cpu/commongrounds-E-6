@@ -8,6 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from accounts.mixins import RoleRequiredMixin
 from .forms import JobFormSet, CommissionForm
 from django.http import HttpResponseForbidden
+from django.urls import reverse
 
 from .services import update_commission_status, CommissionService
 # Create your views here.
@@ -119,7 +120,7 @@ class CommissionCreateView(LoginRequiredMixin, RoleRequiredMixin, CreateView):
                 jobs_data=jobs_data
             )
 
-            return redirect(self.success_url)
+            return redirect(reverse('commissions:commission_detail', kwargs={'pk': self.object.pk}))
 
         return self.render_to_response(self.get_context_data(form=form))
 
@@ -151,7 +152,7 @@ class CommissionUpdateView(LoginRequiredMixin, RoleRequiredMixin, UpdateView):
 
             CommissionService.sync_commission_status(self.object)
 
-            return redirect(self.success_url)
+            return redirect(reverse('commissions:commission_detail', kwargs={'pk': self.object.pk}))
 
         return self.render_to_response(self.get_context_data(form=form))
 

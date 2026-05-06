@@ -119,6 +119,10 @@ class Job(models.Model):
         default=get_default_job_status
     )
 
+    def __str__(self):
+        return self.role
+    
+
     class Meta:
         ordering = ["-status", "-manpower_required", "role"]
         verbose_name = "Job"
@@ -144,6 +148,10 @@ class JobApplication(models.Model):
         default=get_default_application_status
     )
     applied_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.applicant.display_name + " applied to " + self.job.role
+    
 
     class Meta:
         ordering = ['status', '-applied_on']

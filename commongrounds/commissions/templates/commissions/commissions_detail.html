@@ -41,4 +41,6 @@
 {% else %}
     <a href="{% url 'commissions:commission_update' pk %}">Update Commission</a>
 {% endif %}
+<br>
+<a href="{% url 'commissions:commission_list' %}">Return to list of Commissions</a>
 {% endblock %}
