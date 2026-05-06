@@ -10,25 +10,18 @@ class BaseTransactionStrategy:
 
 class AuthenticatedPurchaseStrategy(BaseTransactionStrategy):
     def execute(self, request, product, form):
-        existing_transaction = Transaction.objects.filter(
-            buyer=request.user.profile, product=product, status="On cart"
-        ).first()
+        user_profile = request.user.profile
+        amount = form.cleaned_data["amount"]
 
-        if existing_transaction:
-            added_amount = form.cleaned_data["amount"]
-            existing_transaction.amount += added_amount
-            existing_transaction.save()
-            product.stock = max(0, product.stock - added_amount)
-            if product.stock == 0:
-                product.status = "Out of stock"
-            elif product.status == "Out of stock" and product.stock > 0:
-                product.status = "Available"
-            product.save()
-        else:
-            transaction = form.save(commit=False)
-            transaction.product = product
-            transaction.buyer = request.user.profile
-            transaction.status = "On cart"
+        transaction, created = Transaction.objects.get_or_create(
+            buyer=user_profile,
+            product=product,
+            status="On cart",
+            defaults={"amount": amount},
+        )
+
+        if not created:
+            transaction.amount += amount
             transaction.save()
 
         return redirect("merchstore:cart")

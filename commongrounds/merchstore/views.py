@@ -58,10 +58,6 @@ class ProductListView(ListView):
                     if existing_transaction:
                         existing_transaction.amount += pending["amount"]
                         existing_transaction.save()
-                        product.stock = max(0, product.stock - pending["amount"])
-                        if product.stock == 0:
-                            product.status = "Out of stock"
-                        product.save()
                     else:
                         Transaction.objects.create(
                             buyer=request.user.profile,
