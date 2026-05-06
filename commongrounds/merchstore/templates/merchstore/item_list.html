@@ -1,7 +1,7 @@
 {% extends "base.html" %} {% block title %}Merchandise List{% endblock %} {% block body %}
 <h2>Merchandise Store</h2>
 
-{% if request.user.is_authenticated and not is_seller %}
+{% if request.user.is_authenticated %}
 <p>
     <a href="{% url 'merchstore:cart' %}" style="font-weight: bold">View Your Cart</a>
 </p>
