@@ -39,6 +39,7 @@ class ProjectListView(ListView):
             
         return context
 
+
 class ProjectDetailView(LoginRequiredMixin, DetailView):
     model = Project
     template_name = 'diyprojects/projects/project_detail.html'
@@ -53,6 +54,7 @@ class ProjectDetailView(LoginRequiredMixin, DetailView):
 
 
         return context
+
 
 class ProjectCreateView(LoginRequiredMixin, RoleRequiredMixin, CreateView):
     model = Project
@@ -70,7 +72,8 @@ class ProjectCreateView(LoginRequiredMixin, RoleRequiredMixin, CreateView):
 
     def get_success_url(self):
         return self.object.get_absolute_url()
-    
+
+
 class ProjectUpdateView(LoginRequiredMixin, RoleRequiredMixin, UpdateView):
     model = Project
     fields = ['title', 'category', 'description', 'materials', 'steps']
@@ -84,11 +87,13 @@ class ProjectUpdateView(LoginRequiredMixin, RoleRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return self.object.get_absolute_url()
-    
+
+
 class SignUpView(CreateView):
     form_class = UserCreationForm
     success_url = reverse_lazy('login')
     template_name = 'diyprojects/registration/signup.html'
+
 
 def toggle_favorite(request, pk):
     project = get_object_or_404(Project, pk=pk)
@@ -130,5 +135,3 @@ def rate_project(request, pk):
                 defaults={'score': int(score)}
             )
     return redirect('diyprojects:project_detail', pk=pk)
-
-

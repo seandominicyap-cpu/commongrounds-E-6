@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block body %}
+<h1> User Dashboard </h1>
+
+<h3>Books Created</h3>
+<ul>
+    {% for book in created_books %}
+        <li><a href="{% url 'bookclub:book_detail' book.id %}">{{ book.title }}</a></li>
+    {% empty %}
+        <li>No created commissions</li>
+    {% endfor %}
+</ul>
+
+<h3> Commissions Created </h3>
+<ul>
+    {% for commission in created_commissions %}
+        <li><a href="{% url 'commissions:commission_detail' commission.pk %}">{{commission.title}}</a></li>
+    {% empty %}
+        <li>No created commissions</li>
+    {% endfor %}
+</ul>
+
+
+<h3> Projects Created </h3>
+<ul>
+    {% for p in created_projects %}
+        <li><a href="{{ p.get_absolute_url }}">{{ p.title }}</a></li>
+    {% empty %}
+        <li>You haven't created any projects yet.</li>
+    {% endfor %}
+</ul>
+
+<h3>Events Created</h3>
+<ul>
+    {% for event in created_events %}
+    <li>
+        <a href="{{ event.get_absolute_url }}">{{ event.title }}</a>
+        ({{ event.start_time|date:"Y-m-d"}})
+    </li>
+    {% empty %}
+    <li>No created events found.</li>
+    {% endfor %}
+</ul>
+
+<h3>Products Created</h3>
+<ul>
+    {% for item in created_products %}
+    <li style="margin-bottom: 15px; display: flex; align-items: center; gap: 15px">
+        {% if item.product_image %}
+        <img src="{{ item.product_image.url }}" alt="{{ item.name }}" style="width: 50px" />
+        {% endif %}
+        <div>
+            <strong><a href="{{ item.get_absolute_url }}">{{ item.name }}</a></strong>
+            - ₱{{ item.price }} (Stock: {{ item.stock }}) -
+            <a>{{ item.status }}</a>
+            {% if request.user.is_authenticated %} {% if request.user.profile == item.owner %} |
+            <a href="{% url 'merchstore:item_edit' item.pk %}">Edit</a>
+            {% endif %} {% endif %}
+        </div>
+    </li>
+    {% empty %}
+    <li>No products posted yet.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
