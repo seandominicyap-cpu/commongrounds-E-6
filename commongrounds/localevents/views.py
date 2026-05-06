@@ -1,6 +1,6 @@
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views import View
 from django.shortcuts import render, get_object_or_404, redirect
 from accounts.mixins import RoleRequiredMixin
@@ -80,24 +80,23 @@ class EventDetailView(DetailView):
 
 
 class EventCreateView(LoginRequiredMixin, RoleRequiredMixin, CreateView):
-    allowed_roles = ["Event Organizer"]
     model = Event 
     fields = ["title", "category", "event_image", "description", "location", "start_time", "end_time", "event_capacity"]
     template_name = "localevents/event_create.html"
-    success_url = reverse_lazy("event_list")
+    allowed_roles = ["Event Organizer"]
 
     def form_valid(self, form):
-        response = super().form_valid(form)
+        super().form_valid(form)
         self.object.organizers.add(self.request.user.profile)
-        return response 
+        redirect_url = reverse("localevents:event_detail",  kwargs={'pk': self.object.pk})
+        return redirect(redirect_url) 
     
 
 class EventUpdateView(LoginRequiredMixin, RoleRequiredMixin, UpdateView):
-    allowed_roles = ["Event Organizer"]
     model = Event
     fields = ["title", "category", "event_image", "description", "location", "start_time", "end_time", "event_capacity"]
     template_name = "localevents/event_update.html"
-    success_url = reverse_lazy("event_list")
+    allowed_roles = ["Event Organizer"]
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -109,7 +108,8 @@ class EventUpdateView(LoginRequiredMixin, RoleRequiredMixin, UpdateView):
         else:
             event.status = Event.STATUS_AVAILABLE
         event.save()
-        return response
+        redirect_url = reverse("localevents:event_detail",  kwargs={'pk': self.object.pk})
+        return redirect(redirect_url) 
     
 
 class EventSignupView(View):
