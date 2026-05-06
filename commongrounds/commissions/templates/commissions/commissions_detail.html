@@ -37,7 +37,7 @@
 <p> Total manpower: {{total_manpower}}</p>
 <p> Open manpower: {{open_manpower}}</p>
 {% if request.user.profile != maker %}
-    <a disabled>Create Commission</a>
+    <a disabled>Update Commission</a>
 {% else %}
     <a href="{% url 'commissions:commission_update' pk %}">Update Commission</a>
 {% endif %}

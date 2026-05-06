@@ -10,6 +10,7 @@ class CommissionTypeAdmin(admin.ModelAdmin):
 
 
 class CommissionAdmin(admin.ModelAdmin):
+    list_display = ('commission_type', 'maker', 'status', 'created_on')
     model = Commission
 
 
@@ -22,10 +23,12 @@ class ApplicationStatusAdmin(admin.ModelAdmin):
 
 
 class JobAdmin(admin.ModelAdmin):
+    list_display = ('commission', 'role', 'manpower_required', 'status')
     model = Job
 
 
 class JobApplicationAdmin(admin.ModelAdmin):
+    list_display = ('job', 'applicant', 'status', 'applied_on')
     model = JobApplication
 
 

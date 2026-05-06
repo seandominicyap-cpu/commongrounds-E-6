@@ -104,6 +104,12 @@
                     </div>
                 </div>
             </div>
+            <br>
+            <div class="mt-4 p-3 bg-white border rounded">
+                {% if request.user == project.creator.user %}
+                    <a href="{% url 'diyprojects:project_update' project.pk %}">Update Event</a>
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
