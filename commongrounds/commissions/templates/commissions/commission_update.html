@@ -14,9 +14,9 @@
         {% for form in job_formset %}
             <div class="job-form">
                 {{ form.as_p }}
-                {% if form.instance.pk %}
+                <!-- {% if form.instance.pk %}
                     {{ form.DELETE }} Delete
-                {% endif %}
+                {% endif %} -->
             </div>
         {% endfor %}
     </div>

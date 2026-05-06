@@ -5,12 +5,9 @@
         <div class="d-flex justify-content-between align-items-center mt-4">
             <h1>My Dashboard</h1>
             
-            {# The specific button for Project Creators #}
-            {% if user.profile.role == "Project Creator" %}
-                <a href="{% url 'diyprojects:project_create' %}" class="btn btn-success">
-                    + Create New Project
-                </a>
-            {% endif %}
+            <a href="{% url 'diyprojects:project_create' %}" class="btn btn-success">
+                + Create New Project
+            </a>
         </div>
 
         <hr>
