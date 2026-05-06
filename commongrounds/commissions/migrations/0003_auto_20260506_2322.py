@@ -1,6 +1,6 @@
 from django.db import migrations
 
-def create_job_statuses(apps, schema_editor):
+def create_application_statuses(apps, schema_editor):
     ApplicationStatus = apps.get_model('commissions', 'ApplicationStatus')
 
     statuses = [
@@ -15,7 +15,7 @@ def create_job_statuses(apps, schema_editor):
             defaults={"order": order}
         )
 
-def delete_job_statuses(apps, schema_editor):
+def delete_application_statuses(apps, schema_editor):
     ApplicationStatus = apps.get_model('commissions', 'ApplicationStatus')
     ApplicationStatus.objects.filter(
         name__in=["PENDING", "ACCEPTED", "REJECTED"]
@@ -28,5 +28,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(create_job_statuses, delete_job_statuses),
+        migrations.RunPython(create_application_statuses, delete_application_statuses),
     ]
