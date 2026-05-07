@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 from django.views import View
 from accounts.mixins import RoleRequiredMixin
-from merchstore.models import Product, ProductType, Transaction
+from merchstore.models import Product, Transaction
 from merchstore.strategies import AuthenticatedPurchaseStrategy, GuestPurchaseStrategy
 
 
@@ -16,18 +16,11 @@ class TransactionForm(forms.ModelForm):
 
 
 class ProductForm(forms.ModelForm):
-    new_product_type = forms.CharField(
-        max_length=255,
-        required=False,
-        label="Create new product type",
-    )
-
     class Meta:
         model = Product
         fields = [
             "name",
             "product_type",
-            "new_product_type",
             "product_image",
             "description",
             "price",
@@ -37,7 +30,7 @@ class ProductForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["product_type"].required = False
+        self.fields["product_type"].required = True
 
 
 class ProductListView(ListView):
@@ -148,19 +141,6 @@ class ProductCreateView(RoleRequiredMixin, CreateView):
     def form_valid(self, form):
         product = form.save(commit=False)
         product.owner = self.request.user.profile
-        new_type_name = form.cleaned_data.get("new_product_type")
-
-        if new_type_name:
-            product_type, created = ProductType.objects.get_or_create(
-                name=new_type_name.strip()
-            )
-            product.product_type = product_type
-        elif not form.cleaned_data.get("product_type"):
-            form.add_error(
-                "product_type",
-                "Please select an existing product type or enter a new one.",
-            )
-            return self.form_invalid(form)
 
         if product.stock == 0:
             product.status = "Out of stock"
@@ -182,19 +162,6 @@ class ProductUpdateView(RoleRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         product = form.save(commit=False)
-        new_type_name = form.cleaned_data.get("new_product_type")
-
-        if new_type_name:
-            product_type, created = ProductType.objects.get_or_create(
-                name=new_type_name.strip()
-            )
-            product.product_type = product_type
-        elif not form.cleaned_data.get("product_type"):
-            form.add_error(
-                "product_type",
-                "Please select an existing product type or enter a new one.",
-            )
-            return self.form_invalid(form)
 
         if product.stock == 0:
             product.status = "Out of stock"
