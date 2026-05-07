@@ -6,12 +6,9 @@ from .forms import BookFormFactory, BorrowForm
 from accounts.decorators import role_required
 
 
-# Create your views here.
-
-
 def book_list(request):
-    books = Book.objects.all()
-    ctx = {"books": books}
+    all_books = Book.objects.all()
+    ctx = {"all_books": all_books}
 
     if request.user.is_authenticated:
         profile = request.user.profile
@@ -19,10 +16,13 @@ def book_list(request):
         bookmarked = Book.objects.filter(bookmark__profile=profile)
         reviewed = Book.objects.filter(bookreview__user_reviewer=profile)
 
-        user_books = books.exclude(contributor=profile).exclude(
-            bookmark__profile=profile).exclude(bookreview__user_reviewer=profile)
+        # Collect IDs to exclude from all_books
+        user_book_ids = set()
+        user_book_ids.update(contributed.values_list('id', flat=True))
+        user_book_ids.update(bookmarked.values_list('id', flat=True))
+        user_book_ids.update(reviewed.values_list('id', flat=True))
 
-        ctx["books"] = books.exclude(id__in=user_books)
+        ctx["all_books"] = all_books.exclude(id__in=user_book_ids)
         ctx["contributed_books"] = contributed
         ctx["bookmarked_books"] = bookmarked
         ctx["reviewed_books"] = reviewed
@@ -31,7 +31,7 @@ def book_list(request):
 
 
 def book_detail(request, id):
-    book = Book.objects.get(id=id)
+    book = get_object_or_404(Book, id=id)
     ReviewForm = BookFormFactory.get_form('review')
     form = ReviewForm()
 
@@ -71,12 +71,13 @@ def book_create(request):
     form = ContributeForm()
 
     if request.method == "POST":
-        form = ContributeForm(request.POST)
+        form = ContributeForm(request.POST, request.FILES)
         if form.is_valid():
             book = form.save(commit=False)
             book.contributor = request.user.profile
             book.save()
             return redirect("bookclub:book_detail", id=book.id)
+
     ctx = {"form": form}
     return render(request, "bookclub/book_form.html", ctx)
 
@@ -84,12 +85,12 @@ def book_create(request):
 @login_required
 @role_required(["Book Contributor"])
 def book_update(request, id):
-    book = Book.objects.get(id=id)
+    book = get_object_or_404(Book, id=id)
     UpdateForm = BookFormFactory.get_form('update')
     form = UpdateForm(instance=book)
 
     if request.method == 'POST':
-        form = UpdateForm(request.POST, instance=book)
+        form = UpdateForm(request.POST, request.FILES, instance=book)
         if form.is_valid():
             form.save()
             return redirect("bookclub:book_detail", id=book.id)
@@ -99,8 +100,13 @@ def book_update(request, id):
 
 
 def book_borrow(request, id):
-    book = Book.objects.get(id=id)
-    form = BorrowForm()
+    book = get_object_or_404(Book, id=id)
+    initial = {}
+
+    if request.user.is_authenticated:
+        initial['name'] = request.user.profile.display_name
+
+    form = BorrowForm(initial=initial)
 
     if request.method == "POST":
         form = BorrowForm(request.POST)
@@ -111,23 +117,22 @@ def book_borrow(request, id):
                 borrow.borrower = request.user.profile
                 borrow.name = request.user.profile.display_name
             else:
-                borrow.name = request.POST.get("name", "")
-
+                borrow.name = form.cleaned_data.get("name", "")
             borrow.date_to_return = borrow.date_borrowed + timedelta(weeks=2)
             borrow.save()
             return redirect("bookclub:book_detail", id=book.id)
+
     ctx = {"form": form, "book": book}
     return render(request, "bookclub/book_borrow.html", ctx)
 
 
 @login_required
 def book_bookmark(request, id):
-    book = Book.objects.get(id=id)
+    book = get_object_or_404(Book, id=id)
     bookmark = Bookmark.objects.filter(profile=request.user.profile, book=book)
 
     if bookmark.exists():
         bookmark.delete()
-
     else:
         Bookmark.objects.create(profile=request.user.profile, book=book)
 

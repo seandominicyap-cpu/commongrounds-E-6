@@ -1,27 +1,26 @@
-{% extends 'base.html' %} 
-{% block heading_text %} Book List {% endblock%} 
+{% extends 'base.html' %}
+{% block heading_text %} Book List {% endblock %}
 
+{% block body %}
 
-{% block content %}
+<a href="{% url 'bookclub:book_create' %}">+ Add a Book</a>
 
-<a href = "{%url 'bookbluc: book_create'%}">+ Add a Book</a>
-
-{%if request.user.is_authenticated %}
+{% if request.user.is_authenticated %}
     {% if contributed_books %}
         <h3>Books You Contributed</h3>
         <ul>
             {% for book in contributed_books %}
-                <li><a href="{% url 'bookclub:book_detail' book.id %}">{{ book.title }}</a></li>
+                <li><a href="{% url 'bookclub:book_detail' book.id %}">{{ book.title }}</a> by {{ book.author }}</li>
             {% endfor %}
         </ul>
     {% endif %}
 
     {% if bookmarked_books %}
-        <h3>Your Bookmarks </h3>
+        <h3>Your Bookmarks</h3>
         <ul>
             {% for book in bookmarked_books %}
-                <li><a href="{% url 'bookclub:book_detail' book.id %}">{{ book.title }}</a></li>
-            {% endfor %}           
+                <li><a href="{% url 'bookclub:book_detail' book.id %}">{{ book.title }}</a> by {{ book.author }}</li>
+            {% endfor %}
         </ul>
     {% endif %}
 
@@ -29,8 +28,8 @@
         <h3>Books You Reviewed</h3>
         <ul>
             {% for book in reviewed_books %}
-                <li><a href="{% url 'bookclub:book_detail' book.id %}">{{ book.title }}</a></li>
-            {% endfor %}             
+                <li><a href="{% url 'bookclub:book_detail' book.id %}">{{ book.title }}</a> by {{ book.author }}</li>
+            {% endfor %}
         </ul>
     {% endif %}
 {% endif %}
