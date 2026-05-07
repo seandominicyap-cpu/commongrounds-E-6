@@ -22,7 +22,7 @@ def book_list(request):
         user_book_ids.update(bookmarked.values_list('id', flat=True))
         user_book_ids.update(reviewed.values_list('id', flat=True))
 
-        ctx["all_books"] = all_books
+        ctx["all_books"] = all_books.exclude(id__in=user_book_ids)
         ctx["contributed_books"] = contributed
         ctx["bookmarked_books"] = bookmarked
         ctx["reviewed_books"] = reviewed
